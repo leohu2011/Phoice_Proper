@@ -50,6 +50,14 @@
 }
 
 -(void)initializeView{
+    
+    UIButton *btn = [[UIButton alloc]initWithFrame:CGRectMake(100, 100, 100, 50)];
+    [btn setTitle:@"goto Phoice" forState:UIControlStateNormal];
+    btn.backgroundColor = [UIColor clearColor];
+    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [btn addTarget:self action:@selector(transition) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     self.navigationController.toolbar.barStyle = UIBarStyleBlackTranslucent;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
@@ -77,6 +85,7 @@
     rootArray.folder_count += 1;
     
     tv_controller.tv_array = rootArray;
+//    [self presentViewController:tv_controller animated:YES completion:nil];
     [self.navigationController pushViewController:tv_controller animated:YES];
 }
 
