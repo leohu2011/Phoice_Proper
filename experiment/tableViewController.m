@@ -36,6 +36,7 @@
     UIBarButtonItem *pickImage;
     UIBarButtonItem *flexItem;
     UIBarButtonItem *add_Action;
+    UIBarButtonItem *edit_action;
     NSString *folderIcon;
     UIVisualEffectView *blurView;
 }
@@ -253,9 +254,71 @@
     [imgView addGestureRecognizer:tap];
     self.navigationItem.rightBarButtonItem = pickImage;
     
+    edit_action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editAction:)];
+    
     add_Action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFolder:)];
-    [self setToolbarItems:@[flexItem, flexItem, add_Action] animated:NO];
+    [self setToolbarItems:@[edit_action,flexItem, add_Action] animated:NO];
     [self.navigationController setToolbarHidden:NO animated:YES];
+}
+
+-(void)editAction: (UIBarButtonItem*) sender{
+    NSLog(@"edit action activated");
+    if(self.tableView.editing == NO){
+        [self.tableView setEditing:YES animated:YES];
+    }
+    else if(self.tableView.editing == YES){
+        [self.tableView setEditing:NO animated:YES];
+    }
+}
+
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+    //currently does not support deleting folders
+    NSInteger position = indexPath.row;
+    
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *editingArray = [dict objectForKey:self.uniqueID];
+    
+    if ([editingArray.content_array[position] isKindOfClass:[folderArray class]]){
+        return NO;
+    }
+    
+    else {
+        return YES;
+    }
+}
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    //need to diferentiate btw deleting an AVUnit and a Folder
+    NSInteger position = indexPath.row;
+    
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *editingArray = [dict objectForKey:self.uniqueID];
+    
+    if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+        [editingArray.content_array removeObjectAtIndex:position];
+        editingArray.item_count -= 1;
+        
+        [dict setObject:editingArray forKey:self.uniqueID];
+        NSMutableData *data_new = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
+        [archiver encodeObject:dict forKey:@"mainDict"];
+        [archiver finishEncoding];
+        if(![data_new writeToFile:Plist_filePath atomically:YES]){
+            NSLog(@"something went wrong");
+        }
+    }
+    
+    if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+        //this is the tricky part, when deleting a folder, it is imperative that we delete all the folders that is embeded in this folder
+    }
+    
+    [self.tableView setEditing:NO animated:YES];
+    [self.tableView reloadData];
+    
 }
 
 -(void)addAction: (UIBarButtonItem*) sender{
