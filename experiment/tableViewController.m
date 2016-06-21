@@ -64,7 +64,12 @@
  UITableViewDelegate methods
  */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger count = self.tv_array.folder_count + self.tv_array.item_count;
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *rootArray = [dict objectForKey:self.uniqueID];
+    self.tv_array = rootArray;
+    NSInteger count = rootArray.content_array.count;
     return count;
 }
 
@@ -248,13 +253,6 @@
     [imgView addGestureRecognizer:tap];
     self.navigationItem.rightBarButtonItem = pickImage;
     
-//    UIImage *img2 = [UIImage imageNamed:@"add_folder"];
-//    UIImageView *imgView2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
-//    imgView2.contentMode = UIViewContentModeScaleAspectFit;
-//    imgView2.image = img2;
-//    addFolder = [[UIBarButtonItem alloc]initWithCustomView:imgView];
-//    UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(addAction:)];
-//    [imgView addGestureRecognizer:tap2];
     add_Action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFolder:)];
     [self setToolbarItems:@[flexItem, flexItem, add_Action] animated:NO];
     [self.navigationController setToolbarHidden:NO animated:YES];
@@ -299,7 +297,38 @@
 
 -(void)addFolder: (UIBarButtonItem*) sender{
     NSLog(@"adding new folder to current level");
-    [self removeBlurView];
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *current_array = [dict objectForKey:self.uniqueID];
+    
+    folderArray *emptyFolder = [[folderArray alloc]init];
+    emptyFolder.folder_count = 0;
+    emptyFolder.item_count = 0;
+    emptyFolder.folderName = @"empty folder";
+    emptyFolder.content_array = nil;
+    NSUUID *uuid = [[NSUUID alloc]init];
+    NSString *uid = [uuid UUIDString];
+    emptyFolder.unique_ID = uid;
+    
+    [current_array.content_array addObject:emptyFolder];
+    current_array.folder_count += 1;
+    
+    //adding to current array
+    [dict setObject:current_array forKey:self.uniqueID];
+    
+    //adding the new empty array
+    [dict setObject:emptyFolder forKey:emptyFolder.unique_ID];
+    
+    NSMutableData *data_new = [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
+    [archiver encodeObject:dict forKey:@"mainDict"];
+    [archiver finishEncoding];
+    if(![data_new writeToFile:Plist_filePath atomically:YES]){
+        NSLog(@"something went wrong");
+    }
+    
+    [self.tableView reloadData];
 }
 
 -(void)chooseImage: (UIBarButtonItem*) sender{
@@ -367,10 +396,13 @@
 
     BOOL contain = NO;
     
-    for (AVUnit *examined_unit in current_array.content_array){
-        if ([examined_unit.small_address isEqualToString:small_address]){
-            contain = YES;
-            break;
+    for (NSInteger i = 0; i < current_array.content_array.count; i++){
+        if ([current_array.content_array[i] isKindOfClass:[AVUnit class]]){
+            AVUnit *next_unit = current_array.content_array[i];
+            if ([next_unit.small_address isEqualToString:small_address]){
+                contain = YES;
+                break;
+            }
         }
     }
     
@@ -412,8 +444,8 @@
         
         if(!contain){
             //put into the mwPhotoArray
-            UIImage *img = [[UIImage alloc]initWithData:big_data];
-            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
+//            UIImage *img = [[UIImage alloc]initWithData:big_data];
+//            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
             //save onto plist
             [current_array.content_array addObject:unit];
             current_array.item_count += 1;
@@ -435,6 +467,7 @@
         //on completion need to reload the tableView
         [self.tableView reloadData];
     }];
+    
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:nil];
     
     [alert addAction:action];
@@ -448,9 +481,6 @@
     //new feature coming after IOS7
     self.automaticallyAdjustsScrollViewInsets = YES;
     //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
-    //    self.tableView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y);
-    
-    //    self.tableView.bounds = CGRectMake(0, 200, self.view.frame.size.width, self.view.frame.size.height);
     
     self.tableView.backgroundColor = [UIColor grayColor];
     
@@ -465,11 +495,6 @@
     
     self.tableView.delegate = self;
     self.tableView.rowHeight = 100;
-    //    self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
-    
-    
-    //    [self.view addSubview:self.table_View];
-    
 }
 
 
@@ -488,8 +513,6 @@
     
     return nil;
 }
-
-
 
 //consider moving this to AVUnit
 -(NSString*) obtainCellRecordingAddressWithIndex: (int) index{

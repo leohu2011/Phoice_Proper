@@ -70,26 +70,12 @@
 
 -(void)transition{
     tableViewController *tv_controller = [[tableViewController alloc]initWithStyle:UITableViewStylePlain];
-    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
-    folderArray *rootArray = [dict objectForKey:root_array_ID];
-    
-    folderArray *emptyFolder = [[folderArray alloc]init];
-    emptyFolder.folder_count = 0;
-    emptyFolder.item_count = 0;
-    emptyFolder.folderName = @"empty folder";
-    emptyFolder.content_array = nil;
-    NSUUID *uuid = [[NSUUID alloc]init];
-    NSString *uid = [uuid UUIDString];
-    //the unique ID for root array is fixed
-    emptyFolder.unique_ID = uid;
-    [rootArray.content_array addObject:emptyFolder];
-    rootArray.folder_count += 1;
-    
-    
-    
+//    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+//    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+//    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+//    folderArray *rootArray = [dict objectForKey:root_array_ID];
 //    tv_controller.tv_array = rootArray;
+    
     tv_controller.uniqueID = root_array_ID;
     //    [self presentViewController:tv_controller animated:YES completion:nil];
     [self.navigationController pushViewController:tv_controller animated:YES];
@@ -134,6 +120,18 @@
             tableView_contentArray.item_count += 1;
         }
         
+//        folderArray *emptyFolder = [[folderArray alloc]init];
+//        emptyFolder.folder_count = 0;
+//        emptyFolder.item_count = 0;
+//        emptyFolder.folderName = @"empty folder";
+//        emptyFolder.content_array = nil;
+//        NSUUID *uuid = [[NSUUID alloc]init];
+//        NSString *uid = [uuid UUIDString];
+//        emptyFolder.unique_ID = uid;
+//        [tableView_contentArray.content_array addObject:emptyFolder];
+//        tableView_contentArray.folder_count += 1;
+        
+
         NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
         [dict setObject:tableView_contentArray forKey:root_array_ID];
         
