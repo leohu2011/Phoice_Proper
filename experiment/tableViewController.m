@@ -61,9 +61,7 @@
     
 }
 
-/*
- UITableViewDelegate methods
- */
+#pragma mark - UITableView methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
@@ -165,8 +163,37 @@
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    tableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+
+    NSInteger position = indexPath.row;
+    
+    //    NSString *address = contentArray[temp];
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *current_array = [dict objectForKey:self.uniqueID];
+    
+    if ([current_array.content_array[position] isKindOfClass:[AVUnit class]]){
+        
+        detailViewController *detail;
+        
+        AVUnit *selected_unit = current_array.content_array[position];
+        NSString *address = selected_unit.big_address;
+        
+        detail = [[detailViewController alloc]initWithIndex:indexPath andAddress: address];
+        detail.delegate = self;
+        detail.photoLocation = cell.photoAddress;
+        detail.audioLocation = cell.recordingAdress;
+        
+        [self.navigationController pushViewController:detail animated:YES];
+        cell.selected = NO;
+    }
+    
+    
     
 }
+
+#pragma mark - others
 
 -(void)loadIntoMWPhotoArray{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -261,8 +288,11 @@
     [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
+
+#pragma mark - UIBarButton Actions
+
 -(void)editAction: (UIBarButtonItem*) sender{
-    NSLog(@"edit action activated");
+//    NSLog(@"edit action activated");
     if(self.tableView.editing == NO){
         [self.tableView setEditing:YES animated:YES];
     }
@@ -561,9 +591,7 @@
 }
 
 
-/*
- MWPhotoBrowserDelegate methods
- */
+#pragma mark -  MWPhotoBrowserDelegate methods
 
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
     return mwPhotoArray.count;
@@ -576,6 +604,10 @@
     
     return nil;
 }
+
+
+#pragma mark - other
+
 
 //consider moving this to AVUnit
 -(NSString*) obtainCellRecordingAddressWithIndex: (int) index{
