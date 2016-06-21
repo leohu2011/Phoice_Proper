@@ -113,6 +113,7 @@
 		07C34D1B1CE99DEE00800A64 = {
 			isa = PBXGroup;
 			children = (
+				27C6D0D41D17F60600901752 /* resource */,
 				07C34D261CE99DEE00800A64 /* experiment */,
 				07C34D401CE99DEF00800A64 /* experimentTests */,
 				07C34D4B1CE99DEF00800A64 /* experimentUITests */,
@@ -190,6 +191,13 @@
 				07C34D4E1CE99DEF00800A64 /* Info.plist */,
 			);
 			path = experimentUITests;
+			sourceTree = "<group>";
+		};
+		27C6D0D41D17F60600901752 /* resource */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = resource;
 			sourceTree = "<group>";
 		};
 		3BBCFE735471063EC49ECC37 /* Pods */ = {

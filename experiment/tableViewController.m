@@ -22,7 +22,6 @@
 @implementation tableViewController{
     int currentIndex;
     NSMutableArray *mwPhotoArray;
-    NSString *current_unique_ID;
     
     //initial photo content
     NSArray *contentArray;
@@ -31,10 +30,14 @@
     //each array element contains: <small_data, big_data, small_address/assetURL>
     NSString *Plist_filePath;
     
+    //DZNPhotoPickerController *imagePicker;
+    
     UIImagePickerController *imgPickerController;
     UIBarButtonItem *pickImage;
     UIBarButtonItem *flexItem;
+    UIBarButtonItem *add_Action;
     NSString *folderIcon;
+    UIVisualEffectView *blurView;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -54,12 +57,12 @@
     [self initializeView];
     
     [self initializeTableView];
-
+    
 }
 
 /*
  UITableViewDelegate methods
-*/
+ */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger count = self.tv_array.folder_count + self.tv_array.item_count;
     return count;
@@ -160,6 +163,17 @@
 }
 
 -(void)loadIntoMWPhotoArray{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [paths objectAtIndex:0];
+    Plist_filePath = [documentDirectory stringByAppendingPathComponent:@"savedData.plist"];
+    
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *rootArray = [dict objectForKey:self.uniqueID];
+    
+    self.tv_array = rootArray;
+    
     mwPhotoArray = [[NSMutableArray alloc]init];
     
     NSMutableArray *content = self.tv_array.content_array;
@@ -170,14 +184,14 @@
         }
         else if ([obj isKindOfClass:[AVUnit class]]){
             AVUnit *unit = obj;
-            UIImage *img = [[UIImage alloc]initWithData:unit.big_data];
-            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
+            NSURL *url = [NSURL URLWithString:unit.big_address];
+            [mwPhotoArray addObject:[MWPhoto photoWithURL:url]];
         }
         else{
             NSLog(@"something funny in the folderArray's content_array");
         }
     }];
-
+    
     
 }
 
@@ -212,31 +226,84 @@
 }
 
 -(void)initializeView{
-    current_unique_ID = self.tv_array.unique_ID;
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentDirectory = [paths objectAtIndex:0];
-    Plist_filePath = [documentDirectory stringByAppendingPathComponent:@"image.plist"];
     
     //setup navigation bar
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     self.navigationController.toolbar.barStyle = UIBarStyleBlackTranslucent;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.navigationController.toolbar.tintColor = [UIColor blackColor];
+    self.navigationController.toolbar.tintColor = [UIColor whiteColor];
     self.title = @"Phoice";
     
     //setup barItems
     flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
     
-    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
-    //pickImage.tintColor = [UIColor redColor];
+//    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
+    UIImage *img = [UIImage imageNamed:@"add_image"];
+    UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
+    imgView.contentMode = UIViewContentModeScaleAspectFit;
+    imgView.image = img;
+    pickImage = [[UIBarButtonItem alloc]initWithCustomView:imgView];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseImage:)];
+    [imgView addGestureRecognizer:tap];
     self.navigationItem.rightBarButtonItem = pickImage;
+    
+//    UIImage *img2 = [UIImage imageNamed:@"add_folder"];
+//    UIImageView *imgView2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    imgView2.contentMode = UIViewContentModeScaleAspectFit;
+//    imgView2.image = img2;
+//    addFolder = [[UIBarButtonItem alloc]initWithCustomView:imgView];
+//    UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(addAction:)];
+//    [imgView addGestureRecognizer:tap2];
+    add_Action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFolder:)];
+    [self setToolbarItems:@[flexItem, flexItem, add_Action] animated:NO];
     [self.navigationController setToolbarHidden:NO animated:YES];
-    //[self setToolbarItems:@[flexItem] animated:NO];
+}
+
+-(void)addAction: (UIBarButtonItem*) sender{
+    CGFloat height = self.view.frame.size.height;
+    CGFloat width = self.view.frame.size.width;
+    
+    NSLog(@"add action activated");
+    UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    blurView = [[UIVisualEffectView alloc]initWithEffect:blur];
+    [blurView setFrame:CGRectMake(0, 0, width, height)];
+    UITapGestureRecognizer *cancel = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(removeBlurView)];
+    [blurView addGestureRecognizer:cancel];
+    [self.view addSubview:blurView];
+    
+    
+    UIImage *img_photo = [UIImage imageNamed:@"add_image"];
+    UIImageView *imgView_photo = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
+    imgView_photo.contentMode = UIViewContentModeScaleAspectFit;
+    imgView_photo.image = img_photo;
+    imgView_photo.center = CGPointMake(width/2, height/4);
+    UITapGestureRecognizer *tap_photo = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseImage:)];
+    [imgView_photo addGestureRecognizer:tap_photo];
+    [self.view addSubview:imgView_photo];
+    
+    UIImage *img_folder = [UIImage imageNamed:@"add_folder"];
+    UIImageView *imgView_folder = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
+    imgView_folder.contentMode = UIViewContentModeScaleAspectFit;
+    imgView_folder.image = img_folder;
+    imgView_folder.center = CGPointMake(width/2, height/5*3);
+    UITapGestureRecognizer *tap_folder = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(addFolder:)];
+    [imgView_folder addGestureRecognizer:tap_folder];
+    [self.view addSubview:imgView_folder];
+    
+}
+
+-(void)removeBlurView{
+    [blurView removeFromSuperview];
+}
+
+-(void)addFolder: (UIBarButtonItem*) sender{
+    NSLog(@"adding new folder to current level");
+    [self removeBlurView];
 }
 
 -(void)chooseImage: (UIBarButtonItem*) sender{
+    
     imgPickerController = [[UIImagePickerController alloc]init];
     
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
@@ -247,12 +314,24 @@
     imgPickerController.delegate = self;
     imgPickerController.allowsEditing = NO;
     
-    //    [self performSelector:@selector(gotoImagePicker) withObject:nil afterDelay:0.5f];
-    
     [self presentViewController:imgPickerController animated:YES completion:^(void){
         NSLog(@"going into photo library");
     }];
 }
+
+
+//-(UIImage*) OriginImage:(UIImage *)image scaleToSize:(CGSize)size
+//{
+//    UIGraphicsBeginImageContext(size);  //size 为CGSize类型，即你所需要的图片尺寸
+//    
+//    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+//    
+//    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+//    
+//    UIGraphicsEndImageContext();
+//    
+//    return scaledImage;   //返回的就是已经改变的图片
+//}
 
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
@@ -270,12 +349,26 @@
     NSData *small_data = UIImageJPEGRepresentation(chosenImg, 0.5);
     
     //saving and updating
-    NSMutableArray *mainArray = [[NSMutableArray alloc]initWithContentsOfFile:Plist_filePath];
-    NSArray *array = [[NSArray alloc]initWithObjects:small_data, big_data, small_address, nil];
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *current_array = [dict objectForKey:self.uniqueID];
+
+    AVUnit *unit = [[AVUnit alloc]init];
+    unit.small_address =  small_address;
+    unit.small_data = small_data;
+    unit.big_address = small_address;
+    unit.big_data = big_data;
+    
+    unit.recording_address = nil;
+    unit.text_description = nil;
+    unit.detail_description = nil;
+    unit.parant_folder_ID = self.uniqueID;
+
     BOOL contain = NO;
     
-    for (NSArray *arr in mainArray){
-        if ([arr[2] isEqualToString:small_address]){
+    for (AVUnit *examined_unit in current_array.content_array){
+        if ([examined_unit.small_address isEqualToString:small_address]){
             contain = YES;
             break;
         }
@@ -314,17 +407,23 @@
         description = text1.text;
         detail = text2.text;
         
-        
+        unit.text_description = description;
+        unit.detail_description = detail;
         
         if(!contain){
             //put into the mwPhotoArray
             UIImage *img = [[UIImage alloc]initWithData:big_data];
             [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
             //save onto plist
-            [mainArray addObject:array];
-            BOOL success = [mainArray writeToFile:Plist_filePath atomically:YES];
-            if (!success){
-                NSLog(@"failure writing new item onto Plist");
+            [current_array.content_array addObject:unit];
+            current_array.item_count += 1;
+            [dict setObject:current_array forKey:self.uniqueID];
+            NSMutableData *data = [[NSMutableData alloc]init];
+            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+            [archiver encodeObject:dict forKey:@"mainDict"];
+            [archiver finishEncoding];
+            if(![data writeToFile:Plist_filePath atomically:YES]){
+                NSLog(@"something went wrong");
             }
         }
         
@@ -348,10 +447,10 @@
 -(void) initializeTableView{
     //new feature coming after IOS7
     self.automaticallyAdjustsScrollViewInsets = YES;
-//    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
-//    self.tableView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y);
+    //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
+    //    self.tableView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y);
     
-//    self.tableView.bounds = CGRectMake(0, 200, self.view.frame.size.width, self.view.frame.size.height);
+    //    self.tableView.bounds = CGRectMake(0, 200, self.view.frame.size.width, self.view.frame.size.height);
     
     self.tableView.backgroundColor = [UIColor grayColor];
     
@@ -366,17 +465,17 @@
     
     self.tableView.delegate = self;
     self.tableView.rowHeight = 100;
-//    self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
+    //    self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
     
     
-//    [self.view addSubview:self.table_View];
+    //    [self.view addSubview:self.table_View];
     
 }
 
 
 /*
  MWPhotoBrowserDelegate methods
-*/
+ */
 
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
     return mwPhotoArray.count;

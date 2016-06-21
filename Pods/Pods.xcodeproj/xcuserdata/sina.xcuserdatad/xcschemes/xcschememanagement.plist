@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>AFNetworking.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>CTAssetsPickerController-CTAssetsPickerController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -15,6 +20,16 @@
 			<false/>
 		</dict>
 		<key>DACircularProgress.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>DZNEmptyDataSet.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>DZNPhotoPickerController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -92,7 +107,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4104FD668AD975F16C8F404317DFA261</key>
+		<key>06A6DF17139A3922DD71109D59262F44</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1B806749E6017B14CD105C5FBF1C8293</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2602F3D0DAC534568B6AD7EEA0DD1959</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>344C810697DE65D7D60A57F8E7E105D2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -117,7 +147,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>84CF116857564ECE706803EE51C76B47</key>
+		<key>736E57AD5AEFAAF68D47AE4E8FCB8F68</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -128,6 +158,11 @@
 			<true/>
 		</dict>
 		<key>9775596B3CA16905FC8F66DA8E2A3C67</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A726123CA9D510981977BD50AB5C1DA3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -147,17 +182,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DE3B07ED7FF04F506B0C5E00F4973589</key>
+		<key>DE4C49F927BBE97A077B47C072A44027</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>E2FE87384A67337831E53490EEA8BF11</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>FB7370FB9354A71B50133EFC71688CF2</key>
 		<dict>
 			<key>primary</key>
 			<true/>

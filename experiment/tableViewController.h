@@ -18,6 +18,8 @@
 
 @property (nonatomic, strong) folderArray *tv_array;
 
+@property (nonatomic, copy) NSString *uniqueID;
+
 @end
 
 

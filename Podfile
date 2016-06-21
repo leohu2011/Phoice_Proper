@@ -9,6 +9,10 @@ pod 'FDWaveformView'
 pod 'SCSiriWaveformView'
 pod 'TheAmazingAudioEngine'
 pod 'CTAssetsPickerController'
+pod 'DZNPhotoPickerController'
+pod 'AFNetworking'
+pod 'DZNEmptyDataSet'
+
 
 pod 'FMDB/FTS'   # FMDB with FTS
 pod 'FMDB/standalone'   # FMDB with latest SQLite amalgamation source

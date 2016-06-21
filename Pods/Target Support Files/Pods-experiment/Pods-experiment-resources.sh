@@ -81,11 +81,19 @@ EOM
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/CTAssetsPickerController/CTAssetsPickerController.bundle"
+  install_resource "DZNPhotoPickerController/Source/Resources/en-GB.lproj/DZNPhotoPickerController.strings"
+  install_resource "DZNPhotoPickerController/Source/Resources/en.lproj/DZNPhotoPickerController.strings"
+  install_resource "DZNPhotoPickerController/Source/Resources/en-GB.lproj"
+  install_resource "DZNPhotoPickerController/Source/Resources/en.lproj"
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/FDWaveformView/FDWaveformView.bundle"
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/MWPhotoBrowser/MWPhotoBrowser.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/CTAssetsPickerController/CTAssetsPickerController.bundle"
+  install_resource "DZNPhotoPickerController/Source/Resources/en-GB.lproj/DZNPhotoPickerController.strings"
+  install_resource "DZNPhotoPickerController/Source/Resources/en.lproj/DZNPhotoPickerController.strings"
+  install_resource "DZNPhotoPickerController/Source/Resources/en-GB.lproj"
+  install_resource "DZNPhotoPickerController/Source/Resources/en.lproj"
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/FDWaveformView/FDWaveformView.bundle"
   install_resource "$PODS_CONFIGURATION_BUILD_DIR/MWPhotoBrowser/MWPhotoBrowser.bundle"
 fi
