@@ -202,12 +202,62 @@
         [self.navigationController pushViewController:tvController animated:YES];
         cell.selected = NO;
     }
+}
+
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+    //currently does not support deleting folders
+    NSInteger position = indexPath.row;
     
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *editingArray = [dict objectForKey:self.uniqueID];
     
+    if ([editingArray.content_array[position] isKindOfClass:[folderArray class]]){
+        return YES;
+    }
+    
+    else {
+        return YES;
+    }
+}
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    //need to diferentiate btw deleting an AVUnit and a Folder
+    NSInteger position = indexPath.row;
+    
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *editingArray = [dict objectForKey:self.uniqueID];
+    
+    if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+        [editingArray.content_array removeObjectAtIndex:position];
+        editingArray.item_count -= 1;
+        
+        [dict setObject:editingArray forKey:self.uniqueID];
+        NSMutableData *data_new = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
+        [archiver encodeObject:dict forKey:@"mainDict"];
+        [archiver finishEncoding];
+        if(![data_new writeToFile:Plist_filePath atomically:YES]){
+            NSLog(@"something went wrong");
+        }
+    }
+    
+    else if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+        //this is the tricky part, when deleting a folder, it is imperative that we delete all the folders that is embeded in this folder
+        folderArray *deleteingArray = editingArray.content_array[position];
+        NSString *ID = deleteingArray.unique_ID;
+        [self deleteFolderArrayWithID:ID];
+    }
+    
+    [self.tableView setEditing:NO animated:YES];
+    [self.tableView reloadData];
     
 }
 
-#pragma mark - others
+#pragma mark - initialization step
 
 -(void)loadIntoMWPhotoArray{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -303,6 +353,27 @@
 }
 
 
+-(void) initializeTableView{
+    //new feature coming after IOS7
+    self.automaticallyAdjustsScrollViewInsets = YES;
+    //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
+    
+    self.tableView.backgroundColor = [UIColor whiteColor];
+    
+    self.tableView.dataSource = self;
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    
+    self.tableView.separatorColor = [UIColor blackColor];
+    
+    self.tableView.allowsSelection = YES;
+    self.tableView.userInteractionEnabled = YES;
+    
+    self.tableView.delegate = self;
+    self.tableView.rowHeight = 100;
+}
+
+
 #pragma mark - UIBarButton Actions
 
 -(void)editAction: (UIBarButtonItem*) sender{
@@ -315,54 +386,67 @@
     }
 }
 
--(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
-    //currently does not support deleting folders
-    NSInteger position = indexPath.row;
-    
-    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
-    folderArray *editingArray = [dict objectForKey:self.uniqueID];
-    
-    if ([editingArray.content_array[position] isKindOfClass:[folderArray class]]){
-        return NO;
-    }
-    
-    else {
-        return YES;
-    }
-}
 
--(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
-    //need to diferentiate btw deleting an AVUnit and a Folder
-    NSInteger position = indexPath.row;
-    
+
+-(void)deleteFolderArrayWithID:(NSString*)uniqueID{
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
     NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
-    folderArray *editingArray = [dict objectForKey:self.uniqueID];
+    folderArray *targetArray = [dict objectForKey:uniqueID];
     
-    if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
-        [editingArray.content_array removeObjectAtIndex:position];
-        editingArray.item_count -= 1;
+    //base Case -- the array is empty
+    if (targetArray.content_array.count == 0){
+        [dict removeObjectForKey:uniqueID];
         
-        [dict setObject:editingArray forKey:self.uniqueID];
-        NSMutableData *data_new = [[NSMutableData alloc]init];
-        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
+        NSMutableData *new_data = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
         [archiver encodeObject:dict forKey:@"mainDict"];
         [archiver finishEncoding];
-        if(![data_new writeToFile:Plist_filePath atomically:YES]){
+        if(![new_data writeToFile:Plist_filePath atomically:YES]){
             NSLog(@"something went wrong");
         }
     }
     
-    else if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
-        //this is the tricky part, when deleting a folder, it is imperative that we delete all the folders that is embeded in this folder
+    //second case -- the array contains only AVUnits
+    //same treatment as the above case, since the delete action discards all the embeded files && items
+    else if ([self ifArrayContainAVUnitsOnly:targetArray]){
+        [dict removeObjectForKey:uniqueID];
+        
+        NSMutableData *new_data = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
+        [archiver encodeObject:dict forKey:@"mainDict"];
+        [archiver finishEncoding];
+        if(![new_data writeToFile:Plist_filePath atomically:YES]){
+            NSLog(@"something went wrong");
+        }
     }
     
-    [self.tableView setEditing:NO animated:YES];
-    [self.tableView reloadData];
+    //last case -- the array contains both AVUnits and folders
+    else{
+        [targetArray.content_array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[folderArray class]]){
+                folderArray *subarray = obj;
+                NSString *subID = subarray.unique_ID;
+                [self deleteFolderArrayWithID:subID];
+            }
+        }];
+    }
+}
+
+-(BOOL)ifArrayContainAVUnitsOnly: (folderArray*)array{
+    //empty array
+    if (array.content_array.count == 0){
+        return YES;
+    }
     
+    else {
+        for (NSInteger i = 0; i < array.content_array.count; i++){
+            if ([array.content_array[i] isKindOfClass:[folderArray class]]){
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 -(void)addAction: (UIBarButtonItem*) sender{
@@ -584,25 +668,6 @@
 }
 
 
--(void) initializeTableView{
-    //new feature coming after IOS7
-    self.automaticallyAdjustsScrollViewInsets = YES;
-    //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
-    
-    self.tableView.backgroundColor = [UIColor whiteColor];
-    
-    self.tableView.dataSource = self;
-    
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
-    self.tableView.separatorColor = [UIColor blackColor];
-    
-    self.tableView.allowsSelection = YES;
-    self.tableView.userInteractionEnabled = YES;
-    
-    self.tableView.delegate = self;
-    self.tableView.rowHeight = 100;
-}
 
 
 #pragma mark -  MWPhotoBrowserDelegate methods
