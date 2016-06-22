@@ -14,6 +14,9 @@
 #import "SCSiriWaveformView.h"
 #import "photoItem.h"
 #import "detailViewController+CreateBtn.h"
+#import "FolderArray.h"
+#import "AVUnit.h"
+
 
 @interface detailViewController()<UIScrollViewDelegate,AVAudioRecorderDelegate, AVAudioPlayerDelegate>
 
@@ -25,6 +28,8 @@
     UIImageView *returnImageView;
     UIImageView *enlargeView;
     CGRect originalFrame;
+    
+    NSString *Plist_filePath;
     
     //photoItem object
     photoItem *photo_audio_Item;
@@ -114,16 +119,24 @@
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentDirectory = [paths objectAtIndex:0];
-    NSString *Plist_filePath = [documentDirectory stringByAppendingPathComponent:@"image.plist"];
+    Plist_filePath = [documentDirectory stringByAppendingPathComponent:@"savedData.plist"];
     
-    NSMutableArray *mainArray = [[NSMutableArray alloc]initWithContentsOfFile:Plist_filePath];
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *rootArray = [dict objectForKey:self.parant_unique_ID];
     NSData *big_data;
-    for (NSArray *arr in mainArray){
-        if ([arr[2] isEqualToString:self.photoLocation]){
-            big_data = arr[1];
-            break;
+    
+    for (NSInteger i = 0; i < rootArray.content_array.count; i++){
+        if ([rootArray.content_array[i] isKindOfClass:[AVUnit class]]){
+            AVUnit *unit = rootArray.content_array[i];
+            if ([unit.big_address isEqualToString:self.photoLocation]){
+                big_data = unit.big_data;
+                break;
+            }
         }
     }
+    
     UIImage *img = [[UIImage alloc]initWithData:big_data];
     
     UIImageView *imgView = [[UIImageView alloc]initWithImage:img];

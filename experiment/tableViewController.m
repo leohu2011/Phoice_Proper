@@ -173,6 +173,7 @@
     NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
     folderArray *current_array = [dict objectForKey:self.uniqueID];
     
+    //selected item is an AVUnit
     if ([current_array.content_array[position] isKindOfClass:[AVUnit class]]){
         
         detailViewController *detail;
@@ -184,9 +185,21 @@
         detail.delegate = self;
         detail.photoLocation = cell.photoAddress;
         detail.audioLocation = cell.recordingAdress;
+        detail.parant_unique_ID = selected_unit.parant_folder_ID;
         
         [self.navigationController pushViewController:detail animated:YES];
         cell.selected = NO;
+    }
+    
+    //selected item is a folderArray
+    else if ([current_array.content_array[position] isKindOfClass:[folderArray class]]){
+        folderArray *array = current_array.content_array[position];
+        NSString *ID = array.unique_ID;
+        
+        tableViewController *tvController = [[tableViewController alloc]initWithStyle:UITableViewStylePlain];
+        tvController.uniqueID = ID;
+        
+        [self.navigationController pushViewController:tvController animated:YES];
     }
     
     

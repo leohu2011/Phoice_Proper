@@ -29,6 +29,8 @@
 
 @property (nonatomic, copy) NSString *audioLocation;
 
+@property (nonatomic, copy) NSString *parant_unique_ID;
+
 @end
 
 
