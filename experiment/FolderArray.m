@@ -23,6 +23,7 @@
     [aCoder encodeObject:self.folderName forKey:@"folderName"];
     [aCoder encodeObject:self.unique_ID forKey:@"unique_ID"];
     [aCoder encodeObject:self.content_array forKey:@"content_array"];
+    [aCoder encodeObject:self.parant_ID forKey:@"parant_ID"];
     
 }
 
@@ -36,6 +37,7 @@
         self.folderName = [aDecoder decodeObjectForKey:@"folderName"];
         self.unique_ID = [aDecoder decodeObjectForKey:@"unique_ID"];
         self.content_array = [aDecoder decodeObjectForKey:@"content_array"];
+        self.parant_ID = [aDecoder decodeObjectForKey:@"parant_ID"];
     }
     return self;
 }

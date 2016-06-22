@@ -93,6 +93,8 @@
         //        NSUUID *uuid = [[NSUUID alloc]init];
         //        NSString *uid = [uuid UUIDString];
         tableView_contentArray.unique_ID = root_array_ID;
+        //root array does not have parant
+        tableView_contentArray.parant_ID = @"none";
         tableView_contentArray.folder_count = 0;
         tableView_contentArray.item_count = 0;
         tableView_contentArray.content_array = [[NSMutableArray alloc]init];

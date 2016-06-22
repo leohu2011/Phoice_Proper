@@ -245,7 +245,7 @@
         }
     }
     
-    else if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+    else if([editingArray.content_array[position] isKindOfClass: [folderArray class]]){
         //this is the tricky part, when deleting a folder, it is imperative that we delete all the folders that is embeded in this folder
         folderArray *deleteingArray = editingArray.content_array[position];
         NSString *ID = deleteingArray.unique_ID;
@@ -387,16 +387,43 @@
 }
 
 
-
+#warning there is still problem with deleting nested array. the parant array is not deleted
 -(void)deleteFolderArrayWithID:(NSString*)uniqueID{
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
     NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
     folderArray *targetArray = [dict objectForKey:uniqueID];
     
+    folderArray *parantArray = [dict objectForKey:targetArray.parant_ID];
+    NSInteger position = -1;
+    
+    for (NSInteger i = 0; i < parantArray.content_array.count; i++){
+        if ([parantArray.content_array[i]isKindOfClass:[folderArray class]]){
+            folderArray *current_array = parantArray.content_array[i];
+            NSString* current_ID = current_array.unique_ID;
+            if ([current_ID isEqualToString:uniqueID]){
+                position = i;
+                break;
+            }
+        }
+    }
+    
+    if(position == -1){
+        NSLog(@"error finding the designated folderArray");
+    }
+    
     //base Case -- the array is empty
-    if (targetArray.content_array.count == 0){
+    //second case -- the array contains only AVUnits
+    //same treatment as the above case, since the delete action discards all the embeded files && items
+    if (targetArray.content_array.count == 0 || [self ifArrayContainAVUnitsOnly:targetArray]){
+        NSString *parant_ID = targetArray.parant_ID;
+        //remove the array from dictionary
         [dict removeObjectForKey:uniqueID];
+        //also remove the array from its parant's content_array
+        folderArray *parantArray = [dict objectForKey:parant_ID];
+        [parantArray.content_array removeObjectAtIndex:position];
+        parantArray.folder_count -= 1;
+        [dict setObject:parantArray forKey:parantArray.unique_ID];
         
         NSMutableData *new_data = [[NSMutableData alloc]init];
         NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
@@ -407,19 +434,25 @@
         }
     }
     
-    //second case -- the array contains only AVUnits
-    //same treatment as the above case, since the delete action discards all the embeded files && items
-    else if ([self ifArrayContainAVUnitsOnly:targetArray]){
-        [dict removeObjectForKey:uniqueID];
-        
-        NSMutableData *new_data = [[NSMutableData alloc]init];
-        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
-        [archiver encodeObject:dict forKey:@"mainDict"];
-        [archiver finishEncoding];
-        if(![new_data writeToFile:Plist_filePath atomically:YES]){
-            NSLog(@"something went wrong");
-        }
-    }
+
+//    else if ([self ifArrayContainAVUnitsOnly:targetArray]){
+//        NSString *parant_ID = targetArray.parant_ID;
+//        //remove the array from dictionary
+//        [dict removeObjectForKey:uniqueID];
+//        //also remove the array from its parant's content_array
+//        folderArray *parantArray = [dict objectForKey:parant_ID];
+//        [parantArray.content_array removeObjectAtIndex:position];
+//        parantArray.folder_count -= 1;
+//        [dict setObject:parantArray forKey:parantArray.unique_ID];
+//
+//        NSMutableData *new_data = [[NSMutableData alloc]init];
+//        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
+//        [archiver encodeObject:dict forKey:@"mainDict"];
+//        [archiver finishEncoding];
+//        if(![new_data writeToFile:Plist_filePath atomically:YES]){
+//            NSLog(@"something went wrong");
+//        }
+//    }
     
     //last case -- the array contains both AVUnits and folders
     else{
@@ -501,6 +534,7 @@
     NSUUID *uuid = [[NSUUID alloc]init];
     NSString *uid = [uuid UUIDString];
     emptyFolder.unique_ID = uid;
+    emptyFolder.parant_ID = current_array.unique_ID;
     
     [current_array.content_array addObject:emptyFolder];
     current_array.folder_count += 1;

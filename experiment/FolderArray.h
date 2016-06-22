@@ -29,6 +29,8 @@
 //this ID is used as the key to its subarray objects
 @property (nonatomic, copy) NSString *unique_ID;
 
+@property (nonatomic, copy) NSString *parant_ID;
+
 
 /*
 //rewriting nsmutableArray methods
