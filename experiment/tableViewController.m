@@ -200,6 +200,7 @@
         tvController.uniqueID = ID;
         
         [self.navigationController pushViewController:tvController animated:YES];
+        cell.selected = NO;
     }
     
     
@@ -355,7 +356,7 @@
         }
     }
     
-    if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
+    else if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
         //this is the tricky part, when deleting a folder, it is imperative that we delete all the folders that is embeded in this folder
     }
     
@@ -412,7 +413,7 @@
     emptyFolder.folder_count = 0;
     emptyFolder.item_count = 0;
     emptyFolder.folderName = @"empty folder";
-    emptyFolder.content_array = nil;
+    emptyFolder.content_array = [[NSMutableArray alloc]init];;
     NSUUID *uuid = [[NSUUID alloc]init];
     NSString *uid = [uuid UUIDString];
     emptyFolder.unique_ID = uid;
@@ -588,7 +589,7 @@
     self.automaticallyAdjustsScrollViewInsets = YES;
     //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height *2 - self.navigationController.navigationBar.frame.origin.y) style:UITableViewStylePlain];
     
-    self.tableView.backgroundColor = [UIColor grayColor];
+    self.tableView.backgroundColor = [UIColor whiteColor];
     
     self.tableView.dataSource = self;
     
