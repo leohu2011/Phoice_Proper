@@ -94,8 +94,8 @@
     //item is a folder
     if ([self.tv_array.content_array[position] isKindOfClass:[folderArray class]]){
         folderArray *subFolder = self.tv_array.content_array[position];
-//        NSInteger folderNum = subFolder.folder_count;
-//        NSInteger itemNum = subFolder.item_count;
+        //        NSInteger folderNum = subFolder.folder_count;
+        //        NSInteger itemNum = subFolder.item_count;
         
         NSInteger folderNum = [subFolder obtainFolderCount];
         NSInteger itemNum = [subFolder obtainItemCount];
@@ -116,8 +116,12 @@
         cell.imageView.userInteractionEnabled = YES;
         [cell.imageView addGestureRecognizer:click];
         
-        
-        cell.textLabel.text = [NSString stringWithFormat:@"#%d", (int)position];
+        if (subFolder.folderName){
+            cell.textLabel.text = subFolder.folderName;
+        }
+        else{
+            cell.textLabel.text = [NSString stringWithFormat:@"#%d", (int)position];
+        }
         
         cell.detailTextLabel.text = [NSString stringWithFormat:@"This folder has %d folders and %d items", (int)folderNum, (int)itemNum];
         
@@ -154,8 +158,22 @@
         cell.imageView.userInteractionEnabled = YES;
         [cell.imageView addGestureRecognizer:click];
         
-        cell.textLabel.text = [NSString stringWithFormat:@"#%d", num];
-        cell.detailTextLabel.text = unit.big_address;
+        cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
+        cell.detailTextLabel.text = unit.detail_description ? unit.detail_description : unit.big_address;
+        
+//        if (unit.text_description){
+//            cell.textLabel.text = unit.text_description;
+//        }
+//        else{
+//            cell.textLabel.text = [NSString stringWithFormat:@"#%d", num];
+//        }
+//        
+//        if (unit.detail_description){
+//            cell.detailTextLabel.text = unit.detail_description;
+//        }
+//        else{
+//            cell.detailTextLabel.text = unit.big_address;
+//        }
         
         cell.photoAddress = unit.big_address;
         
@@ -182,7 +200,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     tableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-
+    
     NSInteger position = indexPath.row;
     
     //    NSString *address = contentArray[temp];
@@ -251,7 +269,7 @@
     
     if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
         [editingArray.content_array removeObjectAtIndex:position];
-//        editingArray.item_count -= 1;
+        //        editingArray.item_count -= 1;
         
         [dict setObject:editingArray forKey:self.uniqueID];
         NSMutableData *data_new = [[NSMutableData alloc]init];
@@ -353,7 +371,7 @@
     flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
     
-//    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
+    //    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
     UIImage *img = [UIImage imageNamed:@"add_image"];
     UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
     imgView.contentMode = UIViewContentModeScaleAspectFit;
@@ -395,7 +413,7 @@
 #pragma mark - UIBarButton Actions
 
 -(void)editAction: (UIBarButtonItem*) sender{
-//    NSLog(@"edit action activated");
+    //    NSLog(@"edit action activated");
     if(self.tableView.editing == NO){
         [self.tableView setEditing:YES animated:YES];
     }
@@ -439,7 +457,7 @@
         //also remove the array from its parant's content_array
         folderArray *parantArray = [dict objectForKey:parant_ID];
         [parantArray.content_array removeObjectAtIndex:position];
-//        parantArray.folder_count -= 1;
+        //        parantArray.folder_count -= 1;
         [dict setObject:parantArray forKey:parantArray.unique_ID];
         
         NSMutableData *new_data = [[NSMutableData alloc]init];
@@ -450,7 +468,7 @@
             NSLog(@"something went wrong");
         }
     }
-
+    
     //last case -- the array contains both AVUnits and folders
     else{
         [targetArray.content_array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -520,39 +538,63 @@
 
 -(void)addFolder: (UIBarButtonItem*) sender{
     NSLog(@"adding new folder to current level");
-    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
-    folderArray *current_array = [dict objectForKey:self.uniqueID];
     
-    folderArray *emptyFolder = [[folderArray alloc]init];
-//    emptyFolder.folder_count = 0;
-//    emptyFolder.item_count = 0;
-    emptyFolder.folderName = @"empty folder";
-    emptyFolder.content_array = [[NSMutableArray alloc]init];;
-    NSUUID *uuid = [[NSUUID alloc]init];
-    NSString *uid = [uuid UUIDString];
-    emptyFolder.unique_ID = uid;
-    emptyFolder.parant_ID = current_array.unique_ID;
+    //prompt the user to give a name for the added folder
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"This is an alert" message:@"give a name to the new folder" preferredStyle:UIAlertControllerStyleAlert];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * textField){
+        textField.placeholder = @"Folder Title";
+    }];
     
-    [current_array.content_array addObject:emptyFolder];
-//    current_array.folder_count += 1;
+    UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *givenText = alert.textFields.firstObject;
+        NSString *userGivenName = givenText.text;
+        
+        NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+        NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+        folderArray *current_array = [dict objectForKey:self.uniqueID];
+        
+        folderArray *emptyFolder = [[folderArray alloc]init];
+        //    emptyFolder.folder_count = 0;
+        //    emptyFolder.item_count = 0;
+        if (userGivenName){
+            emptyFolder.folderName = userGivenName;
+        }
+        else{
+            emptyFolder.folderName = @"empty folder";
+        }
+        emptyFolder.content_array = [[NSMutableArray alloc]init];;
+        NSUUID *uuid = [[NSUUID alloc]init];
+        NSString *uid = [uuid UUIDString];
+        emptyFolder.unique_ID = uid;
+        emptyFolder.parant_ID = current_array.unique_ID;
+        
+        [current_array.content_array addObject:emptyFolder];
+        //    current_array.folder_count += 1;
+        
+        //adding to current array
+        [dict setObject:current_array forKey:self.uniqueID];
+        
+        //adding the new empty array
+        [dict setObject:emptyFolder forKey:emptyFolder.unique_ID];
+        
+        NSMutableData *data_new = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
+        [archiver encodeObject:dict forKey:@"mainDict"];
+        [archiver finishEncoding];
+        if(![data_new writeToFile:Plist_filePath atomically:YES]){
+            NSLog(@"something went wrong");
+        }
+        [self.tableView reloadData];
+        
+    }];
     
-    //adding to current array
-    [dict setObject:current_array forKey:self.uniqueID];
+    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:nil];
     
-    //adding the new empty array
-    [dict setObject:emptyFolder forKey:emptyFolder.unique_ID];
+    [alert addAction:action];
+    [alert addAction:action2];
     
-    NSMutableData *data_new = [[NSMutableData alloc]init];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data_new];
-    [archiver encodeObject:dict forKey:@"mainDict"];
-    [archiver finishEncoding];
-    if(![data_new writeToFile:Plist_filePath atomically:YES]){
-        NSLog(@"something went wrong");
-    }
-    
-    [self.tableView reloadData];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 -(void)chooseImage: (UIBarButtonItem*) sender{
@@ -576,13 +618,13 @@
 //-(UIImage*) OriginImage:(UIImage *)image scaleToSize:(CGSize)size
 //{
 //    UIGraphicsBeginImageContext(size);  //size 为CGSize类型，即你所需要的图片尺寸
-//    
+//
 //    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-//    
+//
 //    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-//    
+//
 //    UIGraphicsEndImageContext();
-//    
+//
 //    return scaledImage;   //返回的就是已经改变的图片
 //}
 
@@ -606,7 +648,7 @@
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
     NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
     folderArray *current_array = [dict objectForKey:self.uniqueID];
-
+    
     AVUnit *unit = [[AVUnit alloc]init];
     unit.small_address =  small_address;
     unit.small_data = small_data;
@@ -617,7 +659,7 @@
     unit.text_description = nil;
     unit.detail_description = nil;
     unit.parant_folder_ID = self.uniqueID;
-
+    
     BOOL contain = NO;
     
     for (NSInteger i = 0; i < current_array.content_array.count; i++){
@@ -663,16 +705,20 @@
         description = text1.text;
         detail = text2.text;
         
-        unit.text_description = description;
-        unit.detail_description = detail;
+        if (![description isEqualToString: @""]){
+            unit.text_description = description;
+        }
+        if (![detail isEqualToString:@""]){
+            unit.detail_description = detail;
+        }
         
         if(!contain){
             //put into the mwPhotoArray
-//            UIImage *img = [[UIImage alloc]initWithData:big_data];
-//            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
+            //            UIImage *img = [[UIImage alloc]initWithData:big_data];
+            //            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
             //save onto plist
             [current_array.content_array addObject:unit];
-//            current_array.item_count += 1;
+            //            current_array.item_count += 1;
             [dict setObject:current_array forKey:self.uniqueID];
             NSMutableData *data = [[NSMutableData alloc]init];
             NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];

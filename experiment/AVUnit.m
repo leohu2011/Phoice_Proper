@@ -37,7 +37,7 @@
         self.big_address = [aDecoder decodeObjectForKey:@"big_address"];
         self.big_data = [aDecoder decodeObjectForKey:@"big_data"];
         self.recording_address = [aDecoder decodeObjectForKey:@"recording_address"];
-        self.text_description = [aDecoder decodeObjectForKey:@"test_description"];
+        self.text_description = [aDecoder decodeObjectForKey:@"text_description"];
         self.detail_description = [aDecoder decodeObjectForKey:@"detail_description"];
         self.parant_folder_ID = [aDecoder decodeObjectForKey:@"parant_folder_ID"];
     }
