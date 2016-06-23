@@ -95,8 +95,8 @@
         tableView_contentArray.unique_ID = root_array_ID;
         //root array does not have parant
         tableView_contentArray.parant_ID = @"none";
-        tableView_contentArray.folder_count = 0;
-        tableView_contentArray.item_count = 0;
+//        tableView_contentArray.folder_count = 0;
+//        tableView_contentArray.item_count = 0;
         tableView_contentArray.content_array = [[NSMutableArray alloc]init];
         
         //    generating unique ID
@@ -119,7 +119,7 @@
             unit.parant_folder_ID = root_array_ID;
             
             [tableView_contentArray.content_array addObject:unit];
-            tableView_contentArray.item_count += 1;
+//            tableView_contentArray.item_count += 1;
         }
         
 //        folderArray *emptyFolder = [[folderArray alloc]init];

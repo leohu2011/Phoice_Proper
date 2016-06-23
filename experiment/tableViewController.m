@@ -94,8 +94,11 @@
     //item is a folder
     if ([self.tv_array.content_array[position] isKindOfClass:[folderArray class]]){
         folderArray *subFolder = self.tv_array.content_array[position];
-        NSInteger folderNum = subFolder.folder_count;
-        NSInteger itemNum = subFolder.item_count;
+//        NSInteger folderNum = subFolder.folder_count;
+//        NSInteger itemNum = subFolder.item_count;
+        
+        NSInteger folderNum = [subFolder obtainFolderCount];
+        NSInteger itemNum = [subFolder obtainItemCount];
         
         NSString *reuseIdentifier = [NSString stringWithFormat:@"cellIdentifier:%@ %ld", @"folderCell", (long)[indexPath row]];
         
@@ -125,6 +128,13 @@
     else if ([self.tv_array.content_array[position] isKindOfClass:[AVUnit class]]){
         AVUnit *unit = self.tv_array.content_array[position];
         
+        //    generating unique ID
+        CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
+        NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
+        CFRelease(ref);
+        CFRelease(str_ref);
+        
         NSString *reuseIdentifier = [NSString stringWithFormat:@"cellIdentifier:%@ %ld", @"itemCell", (long)[indexPath row]];
         
         tableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
@@ -148,7 +158,15 @@
         cell.detailTextLabel.text = unit.big_address;
         
         cell.photoAddress = unit.big_address;
-        cell.recordingAdress = [self obtainCellRecordingAddressWithIndex: (int)position];
+        
+#warning currently the write back to AVUnit is done in the detailViewController. Consider moving it to here. Or consider moving the assignment of the recording addresses done in the didselect step.
+        if (unit.recording_address){
+            cell.recordingAdress = unit.recording_address;
+            NSLog(@"already has a recording address");
+        }
+        else if(!cell.recordingAdress){
+            cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
+        }
         cell.tag = (int)position;
         
         return cell;
@@ -233,7 +251,7 @@
     
     if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
         [editingArray.content_array removeObjectAtIndex:position];
-        editingArray.item_count -= 1;
+//        editingArray.item_count -= 1;
         
         [dict setObject:editingArray forKey:self.uniqueID];
         NSMutableData *data_new = [[NSMutableData alloc]init];
@@ -387,7 +405,6 @@
 }
 
 
-#warning there is still problem with deleting nested array. the parant array is not deleted
 -(void)deleteFolderArrayWithID:(NSString*)uniqueID{
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
@@ -422,7 +439,7 @@
         //also remove the array from its parant's content_array
         folderArray *parantArray = [dict objectForKey:parant_ID];
         [parantArray.content_array removeObjectAtIndex:position];
-        parantArray.folder_count -= 1;
+//        parantArray.folder_count -= 1;
         [dict setObject:parantArray forKey:parantArray.unique_ID];
         
         NSMutableData *new_data = [[NSMutableData alloc]init];
@@ -509,8 +526,8 @@
     folderArray *current_array = [dict objectForKey:self.uniqueID];
     
     folderArray *emptyFolder = [[folderArray alloc]init];
-    emptyFolder.folder_count = 0;
-    emptyFolder.item_count = 0;
+//    emptyFolder.folder_count = 0;
+//    emptyFolder.item_count = 0;
     emptyFolder.folderName = @"empty folder";
     emptyFolder.content_array = [[NSMutableArray alloc]init];;
     NSUUID *uuid = [[NSUUID alloc]init];
@@ -519,7 +536,7 @@
     emptyFolder.parant_ID = current_array.unique_ID;
     
     [current_array.content_array addObject:emptyFolder];
-    current_array.folder_count += 1;
+//    current_array.folder_count += 1;
     
     //adding to current array
     [dict setObject:current_array forKey:self.uniqueID];
@@ -655,7 +672,7 @@
 //            [mwPhotoArray addObject:[MWPhoto photoWithImage:img]];
             //save onto plist
             [current_array.content_array addObject:unit];
-            current_array.item_count += 1;
+//            current_array.item_count += 1;
             [dict setObject:current_array forKey:self.uniqueID];
             NSMutableData *data = [[NSMutableData alloc]init];
             NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
@@ -705,14 +722,13 @@
 
 
 //consider moving this to AVUnit
--(NSString*) obtainCellRecordingAddressWithIndex: (int) index{
-    NSString *string=[NSString stringWithFormat:@"num:%d.caf", index];
+-(NSString*) obtainCellRecordingAddressWithID: (NSString*) unique_ID{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentDirectory = [paths objectAtIndex:0];
     NSFileManager *fileManage = [NSFileManager defaultManager];
-    NSString *myDirectory = [documentDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%d", index]];
-    [fileManage createDirectoryAtPath:myDirectory attributes:nil];
-    NSString* filePath= [documentDirectory stringByAppendingPathComponent:string];
+    NSString *myDirectory = [documentDirectory stringByAppendingPathComponent:@"recording addresses"];
+    [fileManage createDirectoryAtPath:myDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    NSString* filePath= [myDirectory stringByAppendingPathComponent:unique_ID];
     
     return filePath;
 }

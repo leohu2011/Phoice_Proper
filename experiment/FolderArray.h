@@ -14,9 +14,9 @@
 @interface folderArray : NSObject<NSCoding>
 
 //folder_count keeps track of the number of subfolders in the current fparray
-@property (nonatomic, assign) NSInteger folder_count;
+//@property (nonatomic, assign) NSInteger folder_count;
 //item_count keeps track of the number of photo_items in the current fparray
-@property (nonatomic, assign) NSInteger item_count;
+//@property (nonatomic, assign) NSInteger item_count;
 
 @property (nonatomic, strong) NSMutableArray *content_array;
 
@@ -30,6 +30,10 @@
 @property (nonatomic, copy) NSString *unique_ID;
 
 @property (nonatomic, copy) NSString *parant_ID;
+
+-(NSInteger) obtainFolderCount;
+
+-(NSInteger) obtainItemCount;
 
 
 /*

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FolderArray.h"
+#import "AVUnit.h"
 
 
 @interface folderArray()
@@ -18,8 +19,8 @@
 
 //nscoding methods
 -(void)encodeWithCoder:(NSCoder *)aCoder{
-    [aCoder encodeInteger:self.folder_count forKey:@"folder_count"];
-    [aCoder encodeInteger:self.item_count forKey:@"item_count"];
+//    [aCoder encodeInteger:self.folder_count forKey:@"folder_count"];
+//    [aCoder encodeInteger:self.item_count forKey:@"item_count"];
     [aCoder encodeObject:self.folderName forKey:@"folderName"];
     [aCoder encodeObject:self.unique_ID forKey:@"unique_ID"];
     [aCoder encodeObject:self.content_array forKey:@"content_array"];
@@ -32,14 +33,35 @@
     self = [super init];
     
     if(self){
-        self.folder_count = [aDecoder decodeIntegerForKey:@"folder_count"];
-        self.item_count = [aDecoder decodeIntegerForKey:@"item_count"];
+//        self.folder_count = [aDecoder decodeIntegerForKey:@"folder_count"];
+//        self.item_count = [aDecoder decodeIntegerForKey:@"item_count"];
         self.folderName = [aDecoder decodeObjectForKey:@"folderName"];
         self.unique_ID = [aDecoder decodeObjectForKey:@"unique_ID"];
         self.content_array = [aDecoder decodeObjectForKey:@"content_array"];
         self.parant_ID = [aDecoder decodeObjectForKey:@"parant_ID"];
     }
     return self;
+}
+
+-(NSInteger) obtainFolderCount {
+    __block NSInteger count = 0;
+    [self.content_array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass: [folderArray class]]){
+            count += 1;
+        }
+    }];
+    return count;
+}
+
+
+-(NSInteger) obtainItemCount {
+    __block NSInteger count = 0;
+    [self.content_array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:[AVUnit class]]){
+            count += 1;
+        }
+    }];
+    return count;
 }
 
 /*
