@@ -43,7 +43,7 @@
     CADisplayLink *meterUpdateDisplayLink;
     
     //recorder
-    AVAudioRecorder *_audioRecorder;
+//    AVAudioRecorder *_audioRecorder;
     UIButton *recordR;
     UIButton *pauseR;
     UIButton *resumeR;
@@ -52,7 +52,7 @@
     NSString *previousMode;
     
     //player
-    AVAudioPlayer *_audioPlayer;
+//    AVAudioPlayer *_audioPlayer;
     UIButton *recordP;
     UIButton *pauseP;
     UIButton *resumeP;
