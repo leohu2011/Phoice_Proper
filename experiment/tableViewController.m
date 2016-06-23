@@ -433,27 +433,7 @@
             NSLog(@"something went wrong");
         }
     }
-    
 
-//    else if ([self ifArrayContainAVUnitsOnly:targetArray]){
-//        NSString *parant_ID = targetArray.parant_ID;
-//        //remove the array from dictionary
-//        [dict removeObjectForKey:uniqueID];
-//        //also remove the array from its parant's content_array
-//        folderArray *parantArray = [dict objectForKey:parant_ID];
-//        [parantArray.content_array removeObjectAtIndex:position];
-//        parantArray.folder_count -= 1;
-//        [dict setObject:parantArray forKey:parantArray.unique_ID];
-//
-//        NSMutableData *new_data = [[NSMutableData alloc]init];
-//        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
-//        [archiver encodeObject:dict forKey:@"mainDict"];
-//        [archiver finishEncoding];
-//        if(![new_data writeToFile:Plist_filePath atomically:YES]){
-//            NSLog(@"something went wrong");
-//        }
-//    }
-    
     //last case -- the array contains both AVUnits and folders
     else{
         [targetArray.content_array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -463,6 +443,8 @@
                 [self deleteFolderArrayWithID:subID];
             }
         }];
+        //deleting the parant
+        [self deleteFolderArrayWithID:uniqueID];
     }
 }
 
