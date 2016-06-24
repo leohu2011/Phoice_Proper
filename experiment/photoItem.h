@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSData *small_photo_data;
 
 @property (nonatomic, copy) NSString *audioAddress;
+@property (nonatomic, copy) NSString *audio_unique_ID;
 
 @property (nonatomic, assign) NSInteger itemIndex;
 

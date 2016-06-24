@@ -50,7 +50,7 @@
     //initialize the audioPlayer
     previousMode = [AVAudioSession sharedInstance].category;
     NSError *error;
-    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayback error:&error];
+    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
     if (_audioPlayer == nil){
@@ -168,13 +168,25 @@
     }
     
     //check if there are existing files at the filepath
-    if ([[NSFileManager defaultManager] fileExistsAtPath:self.audioAddress]){
-        [[NSFileManager defaultManager] removeItemAtPath:self.audioAddress error:nil];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [paths objectAtIndex:0];
+    NSFileManager *fileManage = [NSFileManager defaultManager];
+    NSString *myDirectory = [documentDirectory stringByAppendingPathComponent:@"recording addresses"];
+    [fileManage createDirectoryAtPath:myDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    NSString* filePath= [myDirectory stringByAppendingPathComponent:self.audio_unique_ID];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         NSLog(@"previous recording removed");
     }
     
+//    if ([[NSFileManager defaultManager] fileExistsAtPath:self.audioAddress]){
+//        [[NSFileManager defaultManager] removeItemAtPath:self.audioAddress error:nil];
+//        NSLog(@"previous recording removed");
+//    }
+    
     previousMode = [AVAudioSession sharedInstance].category;
-    [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryRecord error:nil];
+//    [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryRecord error:nil];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [_audioRecorder prepareToRecord];
     
@@ -213,7 +225,7 @@
             NSLog(@"Recording successful!");
         }
         
-        [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
+//        [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
         [UIApplication sharedApplication].idleTimerDisabled = NO;
     }
 }
@@ -251,7 +263,7 @@
     [_audioPlayer stop];
     _audioPlayer = nil;
     
-    [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
+//    [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     
     NSLog(@"playback stopped!");
@@ -265,7 +277,7 @@
             [_audioPlayer stop];
             _audioPlayer = nil;
             
-            [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
+//            [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             NSLog(@"audioPlayer deleted");
         }

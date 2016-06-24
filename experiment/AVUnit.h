@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NSData *big_data;
 
 @property (nonatomic, copy) NSString *recording_address;    //could be extended to an array of recordings
+@property (nonatomic, copy) NSString *recording_unique_ID;
 
 @property (nonatomic, copy) NSString *text_description;
 @property (nonatomic, copy) NSString *detail_description;

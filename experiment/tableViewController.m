@@ -133,11 +133,11 @@
         AVUnit *unit = self.tv_array.content_array[position];
         
         //    generating unique ID
-        CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
-        CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
-        NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
-        CFRelease(ref);
-        CFRelease(str_ref);
+//        CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
+//        CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
+//        NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
+//        CFRelease(ref);
+//        CFRelease(str_ref);
         
         NSString *reuseIdentifier = [NSString stringWithFormat:@"cellIdentifier:%@ %ld", @"itemCell", (long)[indexPath row]];
         
@@ -161,30 +161,18 @@
         cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
         cell.detailTextLabel.text = unit.detail_description ? unit.detail_description : unit.big_address;
         
-//        if (unit.text_description){
-//            cell.textLabel.text = unit.text_description;
-//        }
-//        else{
-//            cell.textLabel.text = [NSString stringWithFormat:@"#%d", num];
-//        }
-//        
-//        if (unit.detail_description){
-//            cell.detailTextLabel.text = unit.detail_description;
-//        }
-//        else{
-//            cell.detailTextLabel.text = unit.big_address;
-//        }
         
         cell.photoAddress = unit.big_address;
         
 #warning currently the write back to AVUnit is done in the detailViewController. Consider moving it to here. Or consider moving the assignment of the recording addresses done in the didselect step.
-        if (unit.recording_address){
-            cell.recordingAdress = unit.recording_address;
-            NSLog(@"already has a recording address");
-        }
-        else if(!cell.recordingAdress){
-            cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
-        }
+//        if (unit.recording_address){
+//            cell.recordingAdress = unit.recording_address;
+//            NSLog(@"already has a recording address");
+//        }
+//        else if(!cell.recordingAdress){
+//            cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
+//        }
+        
         cell.tag = (int)position;
         
         return cell;
@@ -217,11 +205,40 @@
         AVUnit *selected_unit = current_array.content_array[position];
         NSString *address = selected_unit.big_address;
         
+        if (selected_unit.recording_address){
+            cell.recordingAdress = selected_unit.recording_address;
+            NSLog(@"already has a recording address");
+        }
+        else if(!cell.recordingAdress){
+            // generating unique ID for the recording address
+            CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
+            CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
+            NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
+            CFRelease(ref);
+            CFRelease(str_ref);
+            
+            cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
+            
+            selected_unit.recording_address = cell.recordingAdress;
+            selected_unit.recording_unique_ID = unique_ID;
+            
+            NSMutableData *new_data = [[NSMutableData alloc]init];
+            [dict setObject:current_array forKey:self.uniqueID];
+            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
+            [archiver encodeObject:dict forKey:@"mainDict"];
+            [archiver finishEncoding];
+            if(![new_data writeToFile:Plist_filePath atomically:YES]){
+                NSLog(@"something went wrong");
+            }
+        }
+        
         detail = [[detailViewController alloc]initWithIndex:indexPath andAddress: address];
         detail.delegate = self;
         detail.photoLocation = cell.photoAddress;
         detail.audioLocation = cell.recordingAdress;
         detail.parant_unique_ID = selected_unit.parant_folder_ID;
+        detail.audio_unique_ID = selected_unit.recording_unique_ID;
+        
         
         [self.navigationController pushViewController:detail animated:YES];
         cell.selected = NO;

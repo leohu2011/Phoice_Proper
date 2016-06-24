@@ -31,6 +31,8 @@
 
 @property (nonatomic, copy) NSString *parant_unique_ID;
 
+@property (nonatomic, copy) NSString *audio_unique_ID;
+
 @end
 
 

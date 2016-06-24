@@ -86,6 +86,7 @@
     photo_audio_Item.audioAddress = self.audioLocation;
     photo_audio_Item.photoAddress = self.photoLocation;
     photo_audio_Item.itemIndex = (NSInteger) pathChosen.row;
+    photo_audio_Item.audio_unique_ID = self.audio_unique_ID;
     
 
     
@@ -133,21 +134,21 @@
             if ([unit.big_address isEqualToString:self.photoLocation]){
                 big_data = unit.big_data;
                 //record the unit's recording address
-                unit.recording_address = self.audioLocation;
+//                unit.recording_address = self.audioLocation;
                 break;
             }
         }
     }
     
     //writing back the data
-    NSMutableData *new_data = [[NSMutableData alloc]init];
-    [dict setObject:rootArray forKey:self.parant_unique_ID];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
-    [archiver encodeObject:dict forKey:@"mainDict"];
-    [archiver finishEncoding];
-    if(![new_data writeToFile:Plist_filePath atomically:YES]){
-        NSLog(@"something went wrong");
-    }
+//    NSMutableData *new_data = [[NSMutableData alloc]init];
+//    [dict setObject:rootArray forKey:self.parant_unique_ID];
+//    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:new_data];
+//    [archiver encodeObject:dict forKey:@"mainDict"];
+//    [archiver finishEncoding];
+//    if(![new_data writeToFile:Plist_filePath atomically:YES]){
+//        NSLog(@"something went wrong");
+//    }
     
     UIImage *img = [[UIImage alloc]initWithData:big_data];
     
