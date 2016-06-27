@@ -164,9 +164,6 @@
 */
 
 
-
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger position = indexPath.row;
     
@@ -237,7 +234,9 @@
         action.behavior = DRCellSlideActionPullBehavior;
         action.activeBackgroundColor = [UIColor blueColor];
         action.inactiveBackgroundColor = [UIColor grayColor];
-        action.icon = [UIImage imageNamed:@"add_image"];
+        action.activeColor = [UIColor redColor];
+//        action.icon = [UIImage imageNamed:@"add_folder"];
+        action.icon = [UIImage imageNamed:@"edit"];
         action.iconMargin = 20.f;
         action.elasticity = 0.f;
         action.didTriggerBlock = [self pullTriggerBlock];
@@ -396,6 +395,14 @@
     
 }
 
+-(BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath{
+    return YES;
+}
+
+-(void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath{
+    
+}
+
 #pragma mark - initialization step
 
 -(void)loadIntoMWPhotoArray{
@@ -475,7 +482,7 @@
     
     
     //    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
-    UIImage *img = [UIImage imageNamed:@"add_image"];
+    UIImage *img = [UIImage imageNamed:@"addFile"];
     UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
     imgView.contentMode = UIViewContentModeScaleAspectFit;
     imgView.image = img;

@@ -2,15 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "add_image.jpg",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "u=2622126104,2061115465&fm=21&gp=0@2x.png"
     },
     {
       "idiom" : "universal",
+      "filename" : "u=2622126104,2061115465&fm=21&gp=0@3x.jpg",
       "scale" : "3x"
     }
   ],
