@@ -164,7 +164,6 @@
         
         cell.photoAddress = unit.big_address;
         
-#warning currently the write back to AVUnit is done in the detailViewController. Consider moving it to here. Or consider moving the assignment of the recording addresses done in the didselect step.
 //        if (unit.recording_address){
 //            cell.recordingAdress = unit.recording_address;
 //            NSLog(@"already has a recording address");
@@ -218,7 +217,8 @@
             CFRelease(str_ref);
             
             cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
-            
+
+#warning currently saving the unique ID property, probably not necessary. Consider trimming it from AVUnit/detailViewController/photo_item_unit
             selected_unit.recording_address = cell.recordingAdress;
             selected_unit.recording_unique_ID = unique_ID;
             
