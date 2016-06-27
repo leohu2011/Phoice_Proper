@@ -24,6 +24,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>DRCellSlideGestureRecognizer.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>DZNEmptyDataSet.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -112,12 +117,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1B806749E6017B14CD105C5FBF1C8293</key>
+		<key>0DC265EDF108F53417A669933EE82946</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>2602F3D0DAC534568B6AD7EEA0DD1959</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>31412D84D296ED5BC40F4E1BD07DC56D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -152,17 +162,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>925DAA96E8FD727F0CB567BFCC737C3D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>952D3EF0884F36E4FB68AFEBD70B08C8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>975B42C6E2F3AFD745DD22384BD46B22</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>9775596B3CA16905FC8F66DA8E2A3C67</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A726123CA9D510981977BD50AB5C1DA3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -178,11 +193,6 @@
 			<true/>
 		</dict>
 		<key>B180241C64C8328694E67BDDD9D432E2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DE4C49F927BBE97A077B47C072A44027</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -22,6 +22,7 @@ PODS:
     - AFNetworking/NSURLSession
   - CTAssetsPickerController (2.9.5)
   - DACircularProgress (2.3.1)
+  - DRCellSlideGestureRecognizer (1.0.0)
   - DZNEmptyDataSet (1.8.1)
   - DZNPhotoPickerController (1.5):
     - AFNetworking (~> 2.3.1)
@@ -70,6 +71,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworking
   - CTAssetsPickerController
+  - DRCellSlideGestureRecognizer
   - DZNEmptyDataSet
   - DZNPhotoPickerController
   - FDWaveformView
@@ -87,6 +89,7 @@ SPEC CHECKSUMS:
   AFNetworking: 05b9f6e3aa5ac45bc383b4bb108ef338080a26c7
   CTAssetsPickerController: b413fece2194ae3dbf22fbc544cf6f2a6d516a4d
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  DRCellSlideGestureRecognizer: c7213100aa8b1a54b3388c2e73894039058c7795
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   DZNPhotoPickerController: ef61d459db0a8f2709303a47d3e48c8a1635c1af
   FDWaveformView: 9d641a95bc0abd8af27cac4c973b015735d916f0
@@ -100,6 +103,6 @@ SPEC CHECKSUMS:
   sqlite3: c8b1b937fe823ab46411e471cdc1aa92d1b106ce
   TheAmazingAudioEngine: 0ed8c05486646373a48b22a341d31de42d1af2c3
 
-PODFILE CHECKSUM: c4840149d6fec1269a37540c31bd6362781c51a9
+PODFILE CHECKSUM: 72c0428add353503c14caba5eae480baed914649
 
 COCOAPODS: 1.0.1

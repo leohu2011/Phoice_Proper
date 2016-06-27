@@ -14,6 +14,12 @@
 #import "UIImageView+WebCache.h"
 #import "detailViewController.h"
 #import "FMDatabase.h"
+//#import "JASwipeCell.h"
+//#import "JAActionButton.h"
+#import "DRCellSlideAction.h"
+#import "DRCellSlideGestureRecognizer.h"
+
+
 
 @interface tableViewController()<UIImagePickerControllerDelegate, UINavigationControllerDelegate,MWPhotoBrowserDelegate>
 
@@ -88,6 +94,79 @@
     return 0.f;
 }
 
+
+/*
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    JASwipeCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"JASC"];
+    [cell addActionButtons:[self leftButtons] withButtonWidth:100.f withButtonPosition:JAButtonLocationLeft];
+    [cell addActionButtons:[self rightButtons] withButtonWidth:100.f withButtonPosition:JAButtonLocationRight];
+    
+    cell.delegate = self;
+    
+    NSInteger position = indexPath.row;
+    AVUnit *unit = self.tv_array.content_array[position];
+    
+    if (!cell){
+        cell = [[JASwipeCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier: @"JASC"];
+    }
+    
+    int num = (int)position % self.tv_array.content_array.count;
+    
+    UIImage *img = [[UIImage alloc]initWithData:unit.small_data];
+    cell.imageView.image = img;
+    cell.imageView.tag = num;
+    
+    UITapGestureRecognizer *click = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(continuousView:)];
+    click.numberOfTapsRequired = 1;
+    cell.imageView.userInteractionEnabled = YES;
+    [cell.imageView addGestureRecognizer:click];
+    
+    cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
+    cell.detailTextLabel.text = unit.detail_description ? unit.detail_description : unit.big_address;
+    
+    cell.tag = (int)position;
+    
+    
+    return cell;
+}
+
+-(NSArray*)leftButtons{
+    __typeof(self) __weak weakSelf = self;
+    JAActionButton *button1 = [JAActionButton actionButtonWithTitle:@"Delete" color:[UIColor redColor] handler:^(UIButton *actionButton, JASwipeCell *cell) {
+        [cell completePinToTopViewAnimation];
+        [weakSelf leftMostButtonSwipeCompleted:nil];
+        NSLog(@"delete action triggered");
+    }];
+    return @[button1];
+}
+
+-(NSArray*)rightButtons{
+     __typeof(self) __weak weakSelf = self;
+    JAActionButton *button1 = [JAActionButton actionButtonWithTitle:@"Edit" color:[UIColor blueColor] handler:^(UIButton *actionButton, JASwipeCell *cell) {
+        [cell completePinToTopViewAnimation];
+        [weakSelf rightMostButtonSwipeCompleted:nil];
+        NSLog(@"editing aciton triggered");
+    }];
+    
+    JAActionButton *button2 = [JAActionButton actionButtonWithTitle:@"Share" color:[UIColor greenColor] handler:^(UIButton *actionButton, JASwipeCell *cell) {
+        NSLog(@"sharing action triggered");
+    }];
+    return @[button1, button2];
+}
+
+- (void)rightMostButtonSwipeCompleted:(JASwipeCell *)cell {
+	
+}
+
+- (void)leftMostButtonSwipeCompleted:(JASwipeCell *)cell {
+	
+}
+*/
+
+
+
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger position = indexPath.row;
     
@@ -107,6 +186,7 @@
         if (!cell){
             cell = [[tableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
         }
+        
         UIImage *img = [[UIImage alloc]initWithData:[[NSData alloc]initWithContentsOfURL:[[NSURL alloc]initWithString:folderIcon]]];
         cell.imageView.image = img;
         int num = (int)position % self.tv_array.content_array.count;
@@ -132,13 +212,6 @@
     else if ([self.tv_array.content_array[position] isKindOfClass:[AVUnit class]]){
         AVUnit *unit = self.tv_array.content_array[position];
         
-        //    generating unique ID
-//        CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
-//        CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
-//        NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
-//        CFRelease(ref);
-//        CFRelease(str_ref);
-        
         NSString *reuseIdentifier = [NSString stringWithFormat:@"cellIdentifier:%@ %ld", @"itemCell", (long)[indexPath row]];
         
         tableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
@@ -158,20 +231,25 @@
         cell.imageView.userInteractionEnabled = YES;
         [cell.imageView addGestureRecognizer:click];
         
+        
+        DRCellSlideGestureRecognizer *recognizer = [DRCellSlideGestureRecognizer new];
+        DRCellSlideAction *action = [DRCellSlideAction actionForFraction:-0.25];
+        action.behavior = DRCellSlideActionPullBehavior;
+        action.activeBackgroundColor = [UIColor blueColor];
+        action.inactiveBackgroundColor = [UIColor grayColor];
+        action.icon = [UIImage imageNamed:@"add_image"];
+        action.iconMargin = 20.f;
+        action.elasticity = 0.f;
+        action.didTriggerBlock = [self pullTriggerBlock];
+        [recognizer addActions:action];
+        [cell addGestureRecognizer:recognizer];
+        
+        
         cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
         cell.detailTextLabel.text = unit.detail_description ? unit.detail_description : unit.big_address;
         
         
         cell.photoAddress = unit.big_address;
-        
-//        if (unit.recording_address){
-//            cell.recordingAdress = unit.recording_address;
-//            NSLog(@"already has a recording address");
-//        }
-//        else if(!cell.recordingAdress){
-//            cell.recordingAdress = [self obtainCellRecordingAddressWithID: unique_ID];
-//        }
-        
         cell.tag = (int)position;
         
         return cell;
@@ -183,6 +261,13 @@
         return nil;
     }
 }
+
+-(DRCellSlideActionBlock)pullTriggerBlock{
+    return ^(UITableView *tableView, NSIndexPath *indexPath){
+        NSLog(@"pull action triggered");
+    };
+}
+
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -256,6 +341,7 @@
         cell.selected = NO;
     }
 }
+
 
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     //currently does not support deleting folders
