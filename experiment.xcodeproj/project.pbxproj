@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		013BFF4D2FD921E8F40CE0E3 /* libPods-experiment.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 99866986DDB71E2ACAF0A69D /* libPods-experiment.a */; };
-		078503231CFD88C500D812C2 /* detailViewController+CreateBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 078503221CFD88C500D812C2 /* detailViewController+CreateBtn.m */; };
 		07C34D291CE99DEE00800A64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D281CE99DEE00800A64 /* main.m */; };
 		07C34D2C1CE99DEE00800A64 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D2B1CE99DEE00800A64 /* AppDelegate.m */; };
 		07C34D2F1CE99DEE00800A64 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D2E1CE99DEE00800A64 /* ViewController.m */; };
@@ -21,6 +20,8 @@
 		07C34D631CE9A89C00800A64 /* photoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D621CE9A89C00800A64 /* photoItem.m */; };
 		07E02E181CEAC5B300A7CA52 /* detailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E02E171CEAC5B300A7CA52 /* detailViewController.m */; };
 		278821C11D21369800706930 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 278821C01D21369800706930 /* Images.xcassets */; };
+		278821C41D2220BA00706930 /* UserLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 278821C31D2220BA00706930 /* UserLoginController.m */; };
+		278821C81D2268E000706930 /* userInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 278821C71D2268E000706930 /* userInfo.m */; };
 		27FE09DF1D1285E70029F02B /* FolderArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FE09DE1D1285E70029F02B /* FolderArray.m */; };
 		27FE0A261D1395250029F02B /* AVUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FE0A251D1395250029F02B /* AVUnit.m */; };
 		27FE0A2A1D13CB5A0029F02B /* tableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FE0A291D13CB5A0029F02B /* tableViewController.m */; };
@@ -45,8 +46,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		078503211CFD88C500D812C2 /* detailViewController+CreateBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "detailViewController+CreateBtn.h"; sourceTree = "<group>"; };
-		078503221CFD88C500D812C2 /* detailViewController+CreateBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "detailViewController+CreateBtn.m"; sourceTree = "<group>"; };
 		07C34D241CE99DEE00800A64 /* experiment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = experiment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07C34D281CE99DEE00800A64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		07C34D2A1CE99DEE00800A64 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -72,6 +71,10 @@
 		07E02E171CEAC5B300A7CA52 /* detailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = detailViewController.m; sourceTree = "<group>"; };
 		19E4CDD6D201DA766BFE56A3 /* Pods-experiment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-experiment.release.xcconfig"; path = "Pods/Target Support Files/Pods-experiment/Pods-experiment.release.xcconfig"; sourceTree = "<group>"; };
 		278821C01D21369800706930 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		278821C31D2220BA00706930 /* UserLoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserLoginController.m; sourceTree = "<group>"; };
+		278821C51D2220CA00706930 /* UserLoginController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserLoginController.h; sourceTree = "<group>"; };
+		278821C61D2268D300706930 /* userInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = userInfo.h; sourceTree = "<group>"; };
+		278821C71D2268E000706930 /* userInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userInfo.m; sourceTree = "<group>"; };
 		27FE09DD1D1285B40029F02B /* FolderArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderArray.h; sourceTree = "<group>"; };
 		27FE09DE1D1285E70029F02B /* FolderArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderArray.m; sourceTree = "<group>"; };
 		27FE0A251D1395250029F02B /* AVUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVUnit.m; sourceTree = "<group>"; };
@@ -146,16 +149,11 @@
 				27FE0A291D13CB5A0029F02B /* tableViewController.m */,
 				07C34D5D1CE9A63400800A64 /* tableViewCell.h */,
 				07C34D5E1CE9A64600800A64 /* tableViewCell.m */,
-				078503211CFD88C500D812C2 /* detailViewController+CreateBtn.h */,
-				078503221CFD88C500D812C2 /* detailViewController+CreateBtn.m */,
 				07E02E161CEAC5A500A7CA52 /* detailViewController.h */,
 				07E02E171CEAC5B300A7CA52 /* detailViewController.m */,
-				07C34D611CE9A88F00800A64 /* photoItem.h */,
-				07C34D621CE9A89C00800A64 /* photoItem.m */,
-				27FE0A271D1395330029F02B /* AVUnit.h */,
-				27FE0A251D1395250029F02B /* AVUnit.m */,
-				27FE09DD1D1285B40029F02B /* FolderArray.h */,
-				27FE09DE1D1285E70029F02B /* FolderArray.m */,
+				278821C51D2220CA00706930 /* UserLoginController.h */,
+				278821C31D2220BA00706930 /* UserLoginController.m */,
+				278821C21D22205E00706930 /* self-defined structure */,
 				07C34D2D1CE99DEE00800A64 /* ViewController.h */,
 				07C34D2E1CE99DEE00800A64 /* ViewController.m */,
 				278821C01D21369800706930 /* Images.xcassets */,
@@ -191,6 +189,21 @@
 				07C34D4E1CE99DEF00800A64 /* Info.plist */,
 			);
 			path = experimentUITests;
+			sourceTree = "<group>";
+		};
+		278821C21D22205E00706930 /* self-defined structure */ = {
+			isa = PBXGroup;
+			children = (
+				07C34D611CE9A88F00800A64 /* photoItem.h */,
+				07C34D621CE9A89C00800A64 /* photoItem.m */,
+				27FE09DD1D1285B40029F02B /* FolderArray.h */,
+				27FE09DE1D1285E70029F02B /* FolderArray.m */,
+				27FE0A271D1395330029F02B /* AVUnit.h */,
+				27FE0A251D1395250029F02B /* AVUnit.m */,
+				278821C61D2268D300706930 /* userInfo.h */,
+				278821C71D2268E000706930 /* userInfo.m */,
+			);
+			name = "self-defined structure";
 			sourceTree = "<group>";
 		};
 		27C6D0D41D17F60600901752 /* resource */ = {
@@ -399,7 +412,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				078503231CFD88C500D812C2 /* detailViewController+CreateBtn.m in Sources */,
+				278821C81D2268E000706930 /* userInfo.m in Sources */,
 				27FE0A2C1D13DDCF0029F02B /* startUpViewController.m in Sources */,
 				07C34D2F1CE99DEE00800A64 /* ViewController.m in Sources */,
 				27FE0A2A1D13CB5A0029F02B /* tableViewController.m in Sources */,
@@ -408,6 +421,7 @@
 				27FE0A261D1395250029F02B /* AVUnit.m in Sources */,
 				07C34D631CE9A89C00800A64 /* photoItem.m in Sources */,
 				07C34D5C1CE9A00900800A64 /* rootViewController.m in Sources */,
+				278821C41D2220BA00706930 /* UserLoginController.m in Sources */,
 				07C34D291CE99DEE00800A64 /* main.m in Sources */,
 				27FE09DF1D1285E70029F02B /* FolderArray.m in Sources */,
 				07E02E181CEAC5B300A7CA52 /* detailViewController.m in Sources */,

@@ -18,6 +18,7 @@
 //#import "JAActionButton.h"
 #import "DRCellSlideAction.h"
 #import "DRCellSlideGestureRecognizer.h"
+#import "UserLoginController.h"
 
 
 
@@ -42,6 +43,7 @@
     UIBarButtonItem *pickImage;
     UIBarButtonItem *flexItem;
     UIBarButtonItem *add_Action;
+    UIBarButtonItem *user_login;
     UIBarButtonItem *edit_action;
     NSString *folderIcon;
     UIVisualEffectView *blurView;
@@ -481,7 +483,6 @@
     flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
     
-    //    pickImage = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(chooseImage:)];
     UIImage *img = [UIImage imageNamed:@"addFile"];
     UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
     imgView.contentMode = UIViewContentModeScaleAspectFit;
@@ -491,10 +492,14 @@
     [imgView addGestureRecognizer:tap];
     self.navigationItem.rightBarButtonItem = pickImage;
     
+    
     edit_action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editAction:)];
     
     add_Action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFolder:)];
-    [self setToolbarItems:@[edit_action,flexItem, add_Action] animated:NO];
+    
+    user_login = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(gotoLogin:)];
+    
+    [self setToolbarItems:@[edit_action,flexItem, add_Action, flexItem, user_login] animated:NO];
     [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
@@ -532,6 +537,10 @@
     }
 }
 
+-(void)gotoLogin:(UIBarButtonItem*)sender{
+    userLoginController *loginPage = [[userLoginController alloc]init];
+    [self.navigationController pushViewController:loginPage animated:YES];
+}
 
 -(void)deleteFolderArrayWithID:(NSString*)uniqueID{
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];

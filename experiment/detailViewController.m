@@ -13,7 +13,6 @@
 #import "MZTimerLabel.h"
 #import "SCSiriWaveformView.h"
 #import "photoItem.h"
-#import "detailViewController+CreateBtn.h"
 #import "FolderArray.h"
 #import "AVUnit.h"
 

@@ -6,12 +6,12 @@
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "u=1848519176,1446761770&fm=21&gp=0@2x.png"
+      "filename" : "addFile@2x.png",
+      "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "u=1848519176,1446761770&fm=21&gp=0@3x.jpg",
+      "filename" : "addFile@3x.jpg",
       "scale" : "3x"
     }
   ],
