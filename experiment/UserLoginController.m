@@ -17,6 +17,8 @@
 //for now, the login and user infomation is stored in the nsuserdefault and the checking step is also done against the info stored in nsuserdafault. After the afnetworking is properly setup will upload everything to the network. Also, encription is possible with MD5 and other types of encription
 @implementation userLoginController{
     UISegmentedControl *segControl;
+    UIButton *autoButton;
+    UIButton *rememberButton;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -57,11 +59,11 @@
 }
 
 -(void)loginCheck{
-    
+    NSLog(@"logging in");
 }
 
 -(void)logoutCheck{
-    
+    NSLog(@"logging out");
 }
 
 -(void)closeKeyboard: (UITapGestureRecognizer*)tap{
@@ -101,11 +103,56 @@
         passwordField.textAlignment = NSTextAlignmentCenter;
         passwordField.borderStyle = UITextBorderStyleRoundedRect;
         [self.view addSubview:passwordField];
+        
+        autoButton = [[UIButton alloc]init];
+        [autoButton setTitle:@"Auto Login" forState: UIControlStateNormal];
+        autoButton.selected = NO;
+        [autoButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [autoButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+        autoButton.frame = CGRectMake(indent + 20, 400, 100, 50);
+        [autoButton sizeToFit];
+        [autoButton addTarget:self action:@selector(autoLogIn) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:autoButton];
+        
+        rememberButton = [[UIButton alloc]init];
+        [rememberButton setTitle:@"Remember User Name" forState:UIControlStateNormal];
+        rememberButton.selected = NO;
+        [rememberButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [rememberButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+        rememberButton.frame = CGRectMake(170, 400, 200, 50);
+        [rememberButton sizeToFit];
+        [rememberButton addTarget:self action:@selector(rememberName) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:rememberButton];
     }
     
     else{
         NSLog(@"there are only 2 segments to chooose from");
     }
 }
+
+-(void)autoLogIn{
+    if (autoButton.selected == NO){
+        [autoButton setSelected:YES];
+        NSLog(@"auto login mode");
+    }
+    
+    else{
+        [autoButton setSelected:NO];
+    }
+    
+}
+
+-(void)rememberName{
+    if (rememberButton.selected == NO){
+        [rememberButton setSelected:YES];
+        NSLog(@"remembering user name");
+    }
+    
+    else{
+        [rememberButton setSelected:NO];
+    }
+}
+
+
 
 @end
