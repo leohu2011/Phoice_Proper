@@ -49,10 +49,10 @@
     self.title = @"User Login";
     
     //adding segmented control
-    NSArray *segmentArray = [[NSArray alloc]initWithObjects:@"register", @"login", nil];
+    NSArray *segmentArray = [[NSArray alloc]initWithObjects: @"register", @"login", nil];
     segControl = [[UISegmentedControl alloc]initWithItems:segmentArray];
     segControl.frame = CGRectMake(width/4, 80, width/2, 50);
-    segControl.selectedSegmentIndex = 0;
+    segControl.selectedSegmentIndex = 1;
     segControl.backgroundColor = [UIColor whiteColor];
     segControl.tintColor = [UIColor blackColor];
     [self.view addSubview:segControl];
@@ -78,14 +78,37 @@
     passwordField.placeholder = @"Password";
     passwordField.textAlignment = NSTextAlignmentCenter;
     passwordField.borderStyle = UITextBorderStyleRoundedRect;
+    passwordField.secureTextEntry = YES;
     [self.view addSubview:passwordField];
     
+    autoButton = [[UIButton alloc]init];
+    [autoButton setTitle:@"Auto Login" forState: UIControlStateNormal];
+    autoButton.selected = YES;
+    [autoButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [autoButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+    autoButton.frame = CGRectMake(indent + 20, 400, 100, 50);
+    [autoButton sizeToFit];
+    [autoButton addTarget:self action:@selector(autoLogIn) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:autoButton];
+    
+    rememberButton = [[UIButton alloc]init];
+    [rememberButton setTitle:@"Remember User Name" forState:UIControlStateNormal];
+    rememberButton.selected = YES;
+    [rememberButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [rememberButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+    rememberButton.frame = CGRectMake(170, 400, 200, 50);
+    [rememberButton sizeToFit];
+    [rememberButton addTarget:self action:@selector(rememberName) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:rememberButton];
+    
     passwordField2 = [UITextField new];
-    passwordField2.frame = CGRectMake(indent, 390, width-indent*2, 50);
-    passwordField2.placeholder = @"Enter Password Again";
-    passwordField2.textAlignment = NSTextAlignmentCenter;
-    passwordField2.borderStyle = UITextBorderStyleRoundedRect;
-    [self.view addSubview:passwordField2];
+    passwordField2.secureTextEntry = YES;
+//    passwordField2.frame = CGRectMake(indent, 390, width-indent*2, 50);
+//    passwordField2.placeholder = @"Enter Password Again";
+//    passwordField2.textAlignment = NSTextAlignmentCenter;
+//    passwordField2.borderStyle = UITextBorderStyleRoundedRect;
+//    [self.view addSubview:passwordField2];
+
     
     item_login = [[UIBarButtonItem alloc]initWithTitle:@"Log In" style:UIBarButtonItemStyleDone target:self action:@selector(loginCheck)];
     item_logout = [[UIBarButtonItem alloc]initWithTitle:@"Log Out" style:UIBarButtonItemStyleDone target:self action:@selector(logoutCheck)];
@@ -105,6 +128,27 @@
 }
 
 -(void)registerUser{
+    NSLog(@"registering");
+    
+    NSString *userName = nameField.text;
+    if (userName.length < 5){
+        NSLog(@"user name is too short");
+        return;
+    }
+    
+    NSString *pass1 = passwordField.text;
+    NSString *pass2 = passwordField2.text;
+    
+    if (pass1.length < 5){
+        NSLog(@"password too short");
+        return;
+    }
+    
+    if (![pass1 isEqualToString: pass2]){
+        NSLog(@"passwords do not match");
+        return;
+    }
+    
     
 }
 
@@ -166,7 +210,7 @@
         
         autoButton = [[UIButton alloc]init];
         [autoButton setTitle:@"Auto Login" forState: UIControlStateNormal];
-        autoButton.selected = NO;
+        autoButton.selected = YES;
         [autoButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         [autoButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
         autoButton.frame = CGRectMake(indent + 20, 400, 100, 50);
@@ -176,7 +220,7 @@
         
         rememberButton = [[UIButton alloc]init];
         [rememberButton setTitle:@"Remember User Name" forState:UIControlStateNormal];
-        rememberButton.selected = NO;
+        rememberButton.selected = YES;
         [rememberButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         [rememberButton setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
         rememberButton.frame = CGRectMake(170, 400, 200, 50);

@@ -11,6 +11,7 @@
 #import "FMDatabase.h"
 #import "tableViewController.h"
 #import "AVUnit.h"
+#import "userInfo.h"
 
 
 @implementation startUpController{
@@ -26,6 +27,7 @@
     //local cache storage containing the two nsdata for two images
     //each array element contains: <small_data, big_data, small_address/assetURL>
     NSString *Plist_filePath;
+    NSString *UserData_filePath;
     
     //    folderArray *tableView_contentArray;
 }
@@ -41,13 +43,84 @@
                       @"http://ww2.sinaimg.cn/thumbnail/642beb18gw1ep3629gfm0g206o050b2a.gif",
                       @"http://ww1.sinaimg.cn/thumbnail/9be2329dgw1etlyb1yu49j20c82p6qc1.jpg"
                       ];
-    //    [self initializeDataBase];
-    //
-    //    [self obtainDataFromDB];
+    
+    [self initializeUserSystem];
     
     [self kickStartContentArray];
     
     [self initializeView];
+    
+}
+
+-(void)initializeUserSystem{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [paths objectAtIndex:0];
+    UserData_filePath = [documentDirectory stringByAppendingPathComponent:@"UserInfoData.plist"];
+    
+    if ([[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
+        NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+        NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+        
+        BOOL loggedIn = [array[0][0] boolValue];
+        if (loggedIn){
+            return;
+        }
+        else{
+            userInfo *primaryUser = array[1];
+            if (!primaryUser){
+                return;
+            }
+            else{
+                BOOL autoLogin = primaryUser.autoLogin;
+                if (autoLogin){
+//                    NSArray *newArray = [[NSArray alloc]initWithObjects:[NSNumber numberWithBool:YES], primaryUser.user_name, primaryUser.user_ID, nil];
+                    array[0][0] = [NSNumber numberWithBool:YES];
+                    array[0][1] = primaryUser.user_name;
+                    array[0][2] = primaryUser.user_ID;
+                    
+                    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+                    [archiver encodeObject:array forKey:@"user_information"];
+                    [archiver finishEncoding];
+                    if(![data writeToFile:UserData_filePath atomically:YES]){
+                        NSLog(@"something went wrong");
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    else{
+        userInfo *primaryInfo = [userInfo new];
+
+#warning currently the user password is saved as is, in the future need to encode the user password using encriptions such as MD5 or other type of irreversible encriptions to ensure safety
+        userInfo *sample = [[userInfo alloc]init];
+        sample.user_name = @"user name";
+        sample.user_password = @"user password";
+        sample.user_ID = @"user ID";
+        sample.autoLogin = NO;
+        sample.rememberUserName = NO;
+        
+        NSMutableDictionary *userInfoDict = [[NSMutableDictionary alloc]init];
+        [userInfoDict setObject:sample forKey:sample.user_name];
+        
+        //this is the status array indicating whether the user has logged in or not
+        NSArray *statusArray = [[NSArray alloc]initWithObjects: [NSNumber numberWithBool:NO], @"logged in user name", @"logged in user ID", nil];
+        
+#warning first object is the primary user login info, second object is a list of registered user identities. should move the second item online when the network is properly setup
+//        NSArray *userArray = [[NSArray alloc]initWithObjects:statusArray, primaryInfo,userInfoDict, nil];
+        NSArray *userArray = @[statusArray, primaryInfo, userInfoDict];
+        
+        NSMutableData *data = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+        [archiver encodeObject:userArray forKey:@"user_information"];
+        [archiver finishEncoding];
+        if(![data writeToFile:UserData_filePath atomically:YES]){
+            NSLog(@"something went wrong");
+        }
+    }
+    
     
 }
 
@@ -77,7 +150,6 @@
 //    tv_controller.tv_array = rootArray;
     
     tv_controller.uniqueID = root_array_ID;
-    //    [self presentViewController:tv_controller animated:YES completion:nil];
     [self.navigationController pushViewController:tv_controller animated:YES];
 }
 
@@ -90,21 +162,11 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:Plist_filePath]){
         folderArray *tableView_contentArray = [[folderArray alloc]init];
         tableView_contentArray.folderName = @"ROOT POSITION";
-        //        NSUUID *uuid = [[NSUUID alloc]init];
-        //        NSString *uid = [uuid UUIDString];
         tableView_contentArray.unique_ID = root_array_ID;
         //root array does not have parant
         tableView_contentArray.parant_ID = @"none";
-//        tableView_contentArray.folder_count = 0;
-//        tableView_contentArray.item_count = 0;
         tableView_contentArray.content_array = [[NSMutableArray alloc]init];
         
-        //    generating unique ID
-        //    CFUUIDRef ref = CFUUIDCreate(kCFAllocatorDefault);
-        //    CFStringRef str_ref = CFUUIDCreateString(kCFAllocatorDefault, ref);
-        //    NSString *unique_ID = [NSString stringWithString:(__bridge NSString*)str_ref];
-        //    CFRelease(ref);
-        //    CFRelease(str_ref);
         
         for (NSString *str in initial_array){
             AVUnit *unit = [[AVUnit alloc]init];
@@ -119,19 +181,8 @@
             unit.parant_folder_ID = root_array_ID;
             
             [tableView_contentArray.content_array addObject:unit];
-//            tableView_contentArray.item_count += 1;
         }
         
-//        folderArray *emptyFolder = [[folderArray alloc]init];
-//        emptyFolder.folder_count = 0;
-//        emptyFolder.item_count = 0;
-//        emptyFolder.folderName = @"empty folder";
-//        emptyFolder.content_array = nil;
-//        NSUUID *uuid = [[NSUUID alloc]init];
-//        NSString *uid = [uuid UUIDString];
-//        emptyFolder.unique_ID = uid;
-//        [tableView_contentArray.content_array addObject:emptyFolder];
-//        tableView_contentArray.folder_count += 1;
         
 
         NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
