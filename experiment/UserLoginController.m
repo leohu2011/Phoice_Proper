@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UserLoginController.h"
+#import "userInfo.h"
 
 
 @interface userLoginController()
@@ -29,7 +30,7 @@
     UITextField *passwordField;
     UITextField *passwordField2;
     
-    
+    NSString *UserData_filePath;
     
     
     
@@ -39,6 +40,14 @@
     [super viewWillAppear:animated];
     
     [self initializeView];
+    
+    [self initializeData];
+}
+
+-(void)initializeData{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [paths objectAtIndex:0];
+    UserData_filePath = [documentDirectory stringByAppendingPathComponent:@"UserInfoData.plist"];
 }
 
 -(void) initializeView{
@@ -71,6 +80,7 @@
     nameField.placeholder = @"User Name";
     nameField.textAlignment = NSTextAlignmentCenter;
     nameField.borderStyle = UITextBorderStyleRoundedRect;
+    nameField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:nameField];
     
     passwordField = [UITextField new];
@@ -79,6 +89,7 @@
     passwordField.textAlignment = NSTextAlignmentCenter;
     passwordField.borderStyle = UITextBorderStyleRoundedRect;
     passwordField.secureTextEntry = YES;
+    passwordField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:passwordField];
     
     autoButton = [[UIButton alloc]init];
@@ -103,6 +114,7 @@
     
     passwordField2 = [UITextField new];
     passwordField2.secureTextEntry = YES;
+    passwordField2.clearButtonMode = UITextFieldViewModeWhileEditing;
 //    passwordField2.frame = CGRectMake(indent, 390, width-indent*2, 50);
 //    passwordField2.placeholder = @"Enter Password Again";
 //    passwordField2.textAlignment = NSTextAlignmentCenter;
@@ -121,18 +133,66 @@
 
 -(void)loginCheck{
     NSLog(@"logging in");
+    
+    if(![[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
+        NSLog(@"data file missing, chech startUpViewController");
+    }
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    
+    
+    
 }
 
 -(void)logoutCheck{
     NSLog(@"logging out");
+    if(![[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
+        NSLog(@"data file missing, chech startUpViewController");
+    }
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    
+    NSArray *statusArray = array[0];
+    BOOL loggedIn = [statusArray[0] boolValue];
+    if (!loggedIn){
+        NSLog(@"already at log out mode");
+    }
+    
+    else{
+        array[0][0] = [NSNumber numberWithBool:YES];
+        
+        //write back
+        NSMutableData *newData = [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
+        [archiver encodeObject:array forKey:@"user_information"];
+        [archiver finishEncoding];
+        if (![newData writeToFile:UserData_filePath atomically:YES]){
+            NSLog(@"log out successful");
+        }
+    }
 }
 
 -(void)registerUser{
+    
     NSLog(@"registering");
     
     NSString *userName = nameField.text;
     if (userName.length < 5){
         NSLog(@"user name is too short");
+        return;
+    }
+    
+    if(![[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
+        NSLog(@"data file missing, chech startUpViewController");
+    }
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    NSMutableDictionary *dict = array[2];
+    if ([dict objectForKey:userName]){
+        NSLog(@"user name already exists");
         return;
     }
     
@@ -149,7 +209,29 @@
         return;
     }
     
+    //reaching this point indicates that the registering informaiton is acceptable, now needs to write them into the dictionary array[2]
+    userInfo *newUser = [[userInfo alloc]init];
+    newUser.user_name = userName;
+    newUser.user_password = pass1;
+    NSString *identifier = [[NSUUID UUID]UUIDString];
+    newUser.user_ID = identifier;
+    newUser.autoLogin = YES;
+    newUser.rememberUserName = YES;
     
+    [dict setObject:newUser forKey:userName];
+    
+    NSMutableData *newData = [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
+    [archiver encodeObject:array forKey:@"user_information"];
+    [archiver finishEncoding];
+    if ([newData writeToFile:UserData_filePath atomically:YES]){
+        NSLog(@"write back after registering new user successful");
+        [nameField setText:@""];
+        [passwordField setText:@""];
+        [passwordField2 setText:@""];
+    }
+    
+    return;
 }
 
 -(void)closeKeyboard: (UITapGestureRecognizer*)tap{
@@ -164,6 +246,11 @@
     [[self.view subviews]enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [obj removeFromSuperview];
     }];
+    
+    //clear inputs
+    [nameField setText:@""];
+    [passwordField setText:@""];
+    [passwordField2 setText:@""];
     
     [self.view addSubview:segControl];
     
