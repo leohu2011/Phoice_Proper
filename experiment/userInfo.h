@@ -10,7 +10,7 @@
 #define userInfo_h
 #import <UIKit/UIKit.h>
 
-@interface userInfo : NSObject <NSCoding>
+@interface userInfo : NSObject
 
 @property (nonatomic, copy) NSString * user_name;
 

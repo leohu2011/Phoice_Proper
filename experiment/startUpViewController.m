@@ -60,7 +60,7 @@
     if ([[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
         NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
         NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-        NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+        NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
         
         BOOL loggedIn = [array[0][0] boolValue];
         if (loggedIn){
@@ -106,11 +106,11 @@
         [userInfoDict setObject:sample forKey:sample.user_name];
         
         //this is the status array indicating whether the user has logged in or not
-        NSArray *statusArray = [[NSArray alloc]initWithObjects: [NSNumber numberWithBool:NO], @"logged in user name", @"logged in user ID", nil];
+        NSMutableArray *statusArray = [[NSMutableArray alloc]initWithObjects: [NSNumber numberWithBool:NO], @"logged in user name", @"logged in user ID", nil];
         
 #warning first object is the primary user login info, second object is a list of registered user identities. should move the second item online when the network is properly setup
 //        NSArray *userArray = [[NSArray alloc]initWithObjects:statusArray, primaryInfo,userInfoDict, nil];
-        NSArray *userArray = @[statusArray, primaryInfo, userInfoDict];
+        NSMutableArray *userArray = [[NSMutableArray alloc]initWithObjects:statusArray,primaryInfo, userInfoDict, nil];
         
         NSMutableData *data = [[NSMutableData alloc]init];
         NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];

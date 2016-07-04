@@ -127,7 +127,7 @@
     item_register = [[UIBarButtonItem alloc]initWithTitle:@"Register" style:UIBarButtonItemStyleDone target:self action:@selector(registerUser)];
     flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
-    [self setToolbarItems:@[flexItem,item_register, flexItem] animated:YES];
+    [self setToolbarItems:@[flexItem,item_login, flexItem, item_logout, flexItem] animated:YES];
     [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
@@ -139,10 +139,55 @@
     }
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
     
+    NSMutableArray *statusArray = array[0];
+    BOOL loggedIn = [statusArray[0] boolValue];
+    if (loggedIn){
+        NSLog(@"already logged in");
+        return;
+    }
     
+    NSString *userName = nameField.text;
+    NSString *userPassword = passwordField.text;
+    BOOL autoLogIn = autoButton.selected;
+    BOOL rememberUserName = rememberButton.selected;
     
+    NSMutableDictionary *dict = array[2];
+    if(![dict objectForKey:userName]){
+        NSLog(@"wrong user name");
+        return;
+    }
+    if([dict objectForKey:userName]){
+        userInfo *correctUser = [dict objectForKey:userName];
+        NSString *correctPassword = correctUser.user_password;
+        if (![correctPassword isEqualToString:userPassword]){
+            NSLog(@"wrong password");
+            return;
+        }
+        else{
+            NSLog(@"correct credential entered");
+            //user information checks out, change login status and write back
+            correctUser.autoLogin = autoLogIn;
+            correctUser.rememberUserName = rememberUserName;
+            //see if array[2] is changed
+            [dict setObject:correctUser forKey:userName];
+            
+            array[1] = correctUser;
+            statusArray[0] = [NSNumber numberWithBool:YES];
+            statusArray[1] = correctUser.user_name;
+            statusArray[2] = correctUser.user_ID;
+            array[0] = statusArray;
+            
+            NSMutableData *newData = [[NSMutableData alloc]init];
+            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
+            [archiver encodeObject:array forKey:@"user_information"];
+            [archiver finishEncoding];
+            if ([newData writeToFile:UserData_filePath atomically:YES]){
+                NSLog(@"log in successful");
+            }
+        }
+    }
 }
 
 -(void)logoutCheck{
@@ -152,23 +197,24 @@
     }
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
     
-    NSArray *statusArray = array[0];
+    NSMutableArray *statusArray = array[0];
     BOOL loggedIn = [statusArray[0] boolValue];
     if (!loggedIn){
         NSLog(@"already at log out mode");
+        return;
     }
     
     else{
-        array[0][0] = [NSNumber numberWithBool:YES];
+        array[0][0] = [NSNumber numberWithBool:NO];
         
         //write back
         NSMutableData *newData = [[NSMutableData alloc]init];
         NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
         [archiver encodeObject:array forKey:@"user_information"];
         [archiver finishEncoding];
-        if (![newData writeToFile:UserData_filePath atomically:YES]){
+        if ([newData writeToFile:UserData_filePath atomically:YES]){
             NSLog(@"log out successful");
         }
     }
@@ -189,7 +235,7 @@
     }
     NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+    NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
     NSMutableDictionary *dict = array[2];
     if ([dict objectForKey:userName]){
         NSLog(@"user name already exists");

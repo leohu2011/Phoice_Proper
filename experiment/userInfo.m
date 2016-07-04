@@ -15,6 +15,9 @@
 #define kAutoLogin          @"autoLogin"
 #define kRememberUserName   @"rememberUserName"
 
+@interface userInfo() <NSCoding>
+
+@end
 
 @implementation userInfo
 
