@@ -232,18 +232,33 @@
         
         
         DRCellSlideGestureRecognizer *recognizer = [DRCellSlideGestureRecognizer new];
-        DRCellSlideAction *action = [DRCellSlideAction actionForFraction:-0.25];
-        action.behavior = DRCellSlideActionPullBehavior;
-        action.activeBackgroundColor = [UIColor blueColor];
-        action.inactiveBackgroundColor = [UIColor grayColor];
-        action.activeColor = [UIColor redColor];
+        DRCellSlideAction *update_action = [DRCellSlideAction actionForFraction:-0.25];
+        update_action.behavior = DRCellSlideActionPullBehavior;
+        update_action.activeBackgroundColor = [UIColor blueColor];
+        update_action.inactiveBackgroundColor = [UIColor grayColor];
+        update_action.activeColor = [UIColor redColor];
 //        action.icon = [UIImage imageNamed:@"add_folder"];
-        action.icon = [UIImage imageNamed:@"edit"];
-        action.iconMargin = 20.f;
-        action.elasticity = 0.f;
-        action.didTriggerBlock = [self pullTriggerBlock];
-        [recognizer addActions:action];
+        update_action.icon = [UIImage imageNamed:@"edit"];
+        update_action.iconMargin = 20.f;
+        update_action.elasticity = 0.f;
+        update_action.didTriggerBlock = [self update_TriggerBlock];
+        
+        DRCellSlideAction *delete_action = [DRCellSlideAction actionForFraction:-0.5];
+        delete_action.behavior = DRCellSlideActionPushBehavior;
+        delete_action.activeBackgroundColor = [UIColor redColor];
+        delete_action.inactiveBackgroundColor = [UIColor grayColor];
+        delete_action.activeColor = [UIColor blackColor];
+        //        action.icon = [UIImage imageNamed:@"add_folder"];
+        delete_action.icon = [UIImage imageNamed:@"delete"];
+        delete_action.iconMargin = 20.f;
+        delete_action.elasticity = 0.f;
+        delete_action.didTriggerBlock = [self delete_TriggerBlock];
+        
+        
+        [recognizer addActions:@[delete_action,update_action]];
         [cell addGestureRecognizer:recognizer];
+        
+        
         
         
         cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
@@ -263,12 +278,19 @@
     }
 }
 
--(DRCellSlideActionBlock)pullTriggerBlock{
+-(DRCellSlideActionBlock)update_TriggerBlock{
     return ^(UITableView *tableView, NSIndexPath *indexPath){
-        NSLog(@"pull action triggered");
+        NSLog(@"update action triggered");
+        
     };
 }
 
+
+-(DRCellSlideActionBlock)delete_TriggerBlock{
+    return ^(UITableView *tableView, NSIndexPath *indexPath){
+        NSLog(@"delete aciton triggered");
+    };
+}
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
