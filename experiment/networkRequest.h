@@ -14,6 +14,8 @@
 
 @interface networkRequest : NSObject
 
+typedef void (^completionBlock)(BOOL result);
+
 //typedef enum{
 //    case_register,
 //    case_login,
@@ -26,9 +28,12 @@
 //@property (nonatomic, assign) networkRequestType *type;
 
 
--(BOOL)processRegisterRequestWithParameter: (userInfo*)user;
+-(void)processRegisterRequestWithParameter: (userInfo*)user CompletionHandler:(completionBlock)returnResult;
 
 -(void)processLoginRequestWithParameter:(userInfo *)user;
+
+-(void)checkForDuplicateUserName:(userInfo*) user;
+
 
 
 

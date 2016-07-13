@@ -31,9 +31,7 @@
 }
 
 
--(BOOL)processRegisterRequestWithParameter: (userInfo*)user {
-    
-    __block BOOL result;
+-(void)processRegisterRequestWithParameter: (userInfo*)user CompletionHandler:(completionBlock)returnResult{
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
@@ -66,17 +64,27 @@
         
         NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
         
+        if([[resultDict objectForKey:@"result"] isEqualToString:@"success"]){
+            BOOL result = YES;
+            returnResult(result);
+        }
         NSLog(@"---获取到的json格式的字典--%@",resultDict);
-        result = YES;
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         NSLog(@"failure at registering for: %@", error.userInfo);
-        result = NO;
+        BOOL result = NO;
+        returnResult(result);
     }];
     
-    return result;
+    
 }
+
+-(void)checkForDuplicateUserName:(userInfo*) user {
+    return;
+}
+
+
 
 
 

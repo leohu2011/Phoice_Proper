@@ -281,10 +281,15 @@
     
     //connect with server to include this user info
     networkRequest *request = [[networkRequest alloc]init];
-    BOOL success = [request processRegisterRequestWithParameter:newUser];
-    if (!success){
-        NSLog(@"write to server failure");
-    }
+    [request processRegisterRequestWithParameter:newUser CompletionHandler:^(BOOL result) {
+        if (result == YES){
+            NSLog(@"write to server successfully completed");
+        }
+        else{
+            NSLog(@"write to server failed");
+        }
+    }];
+
 }
 
 -(void)closeKeyboard: (UITapGestureRecognizer*)tap{
