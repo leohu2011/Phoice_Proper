@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		013BFF4D2FD921E8F40CE0E3 /* libPods-experiment.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 99866986DDB71E2ACAF0A69D /* libPods-experiment.a */; };
+		079F55951D2B50E800338602 /* networkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 079F55941D2B50E800338602 /* networkRequest.m */; };
 		07C34D291CE99DEE00800A64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D281CE99DEE00800A64 /* main.m */; };
 		07C34D2C1CE99DEE00800A64 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D2B1CE99DEE00800A64 /* AppDelegate.m */; };
 		07C34D2F1CE99DEE00800A64 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C34D2E1CE99DEE00800A64 /* ViewController.m */; };
@@ -46,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		079F55941D2B50E800338602 /* networkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = networkRequest.m; sourceTree = "<group>"; };
+		079F55961D2B50FA00338602 /* networkRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = networkRequest.h; sourceTree = "<group>"; };
 		07C34D241CE99DEE00800A64 /* experiment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = experiment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07C34D281CE99DEE00800A64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		07C34D2A1CE99DEE00800A64 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -153,6 +156,8 @@
 				07E02E171CEAC5B300A7CA52 /* detailViewController.m */,
 				278821C51D2220CA00706930 /* UserLoginController.h */,
 				278821C31D2220BA00706930 /* UserLoginController.m */,
+				079F55961D2B50FA00338602 /* networkRequest.h */,
+				079F55941D2B50E800338602 /* networkRequest.m */,
 				278821C21D22205E00706930 /* self-defined structure */,
 				07C34D2D1CE99DEE00800A64 /* ViewController.h */,
 				07C34D2E1CE99DEE00800A64 /* ViewController.m */,
@@ -420,6 +425,7 @@
 				07C34D5F1CE9A64600800A64 /* tableViewCell.m in Sources */,
 				27FE0A261D1395250029F02B /* AVUnit.m in Sources */,
 				07C34D631CE9A89C00800A64 /* photoItem.m in Sources */,
+				079F55951D2B50E800338602 /* networkRequest.m in Sources */,
 				07C34D5C1CE9A00900800A64 /* rootViewController.m in Sources */,
 				278821C41D2220BA00706930 /* UserLoginController.m in Sources */,
 				07C34D291CE99DEE00800A64 /* main.m in Sources */,

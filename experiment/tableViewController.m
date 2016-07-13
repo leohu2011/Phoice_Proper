@@ -259,8 +259,6 @@
         [cell addGestureRecognizer:recognizer];
         
         
-        
-        
         cell.textLabel.text = unit.text_description ? unit.text_description : [NSString stringWithFormat:@"#%d", num];
         cell.detailTextLabel.text = unit.detail_description ? unit.detail_description : unit.big_address;
         
@@ -278,19 +276,7 @@
     }
 }
 
--(DRCellSlideActionBlock)update_TriggerBlock{
-    return ^(UITableView *tableView, NSIndexPath *indexPath){
-        NSLog(@"update action triggered");
-        
-    };
-}
 
-
--(DRCellSlideActionBlock)delete_TriggerBlock{
-    return ^(UITableView *tableView, NSIndexPath *indexPath){
-        NSLog(@"delete aciton triggered");
-    };
-}
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -395,7 +381,6 @@
     
     if([editingArray.content_array[position] isKindOfClass: [AVUnit class]]){
         [editingArray.content_array removeObjectAtIndex:position];
-        //        editingArray.item_count -= 1;
         
         [dict setObject:editingArray forKey:self.uniqueID];
         NSMutableData *data_new = [[NSMutableData alloc]init];
@@ -756,20 +741,6 @@
 }
 
 
-//-(UIImage*) OriginImage:(UIImage *)image scaleToSize:(CGSize)size
-//{
-//    UIGraphicsBeginImageContext(size);  //size 为CGSize类型，即你所需要的图片尺寸
-//
-//    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-//
-//    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-//
-//    UIGraphicsEndImageContext();
-//
-//    return scaledImage;   //返回的就是已经改变的图片
-//}
-
-
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
     [self dismissViewControllerAnimated:YES completion:^(void){
         NSLog(@"user canceled action, going back to phoice");
@@ -887,8 +858,20 @@
     [picker presentViewController:alert animated:YES completion:nil];
 }
 
+#pragma mark -  DRCellSlideActionBlock methods
 
+-(DRCellSlideActionBlock)update_TriggerBlock{
+    return ^(UITableView *tableView, NSIndexPath *indexPath){
+        NSLog(@"update action triggered");
+        
+    };
+}
 
+-(DRCellSlideActionBlock)delete_TriggerBlock{
+    return ^(UITableView *tableView, NSIndexPath *indexPath){
+        NSLog(@"delete aciton triggered");
+    };
+}
 
 #pragma mark -  MWPhotoBrowserDelegate methods
 

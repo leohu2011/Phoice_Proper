@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "UserLoginController.h"
 #import "userInfo.h"
+#import "networkRequest.h"
 
 
 @interface userLoginController()
@@ -237,6 +238,7 @@
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
     NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
     NSMutableDictionary *dict = array[2];
+    
     if ([dict objectForKey:userName]){
         NSLog(@"user name already exists");
         return;
@@ -277,7 +279,12 @@
         [passwordField2 setText:@""];
     }
     
-    return;
+    //connect with server to include this user info
+    networkRequest *request = [[networkRequest alloc]init];
+    BOOL success = [request processRegisterRequestWithParameter:newUser];
+    if (!success){
+        NSLog(@"write to server failure");
+    }
 }
 
 -(void)closeKeyboard: (UITapGestureRecognizer*)tap{
