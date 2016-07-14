@@ -27,8 +27,47 @@
 
 @implementation networkRequest
 
--(void)processLoginRequestWithParameter:(userInfo *)user {
-	
+-(void)processLoginRequestWithParameter:(userInfo *)user CompletionHandler:(completionBlock)returnResult{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
+    NSString *domainStr = kLoginDestination;
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSString *name = user.user_name;
+    NSString *pwd = user.user_password;
+    
+    [dict setObject:name forKey:@"name"];
+    [dict setObject:pwd forKey:@"password"];
+    
+    
+    [manager POST:domainStr parameters:dict success:^(NSURLSessionDataTask *task, id responseObject) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSLog(@"success at logging in");
+        
+        NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+        NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+        NSLog(@"---获取到的json格式的字典--: %@",resultDict);
+        
+        if([[resultDict objectForKey:@"result"] isEqualToString:@"success"]){
+            BOOL result = YES;
+            returnResult(result);
+        }
+        else{
+            BOOL result2 = NO;
+            returnResult(result2);
+        }
+        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSLog(@"failure at registering for: %@", error.userInfo);
+        BOOL result = NO;
+        returnResult(result);
+    }];
 }
 
 
@@ -68,6 +107,10 @@
         if([[resultDict objectForKey:@"result"] isEqualToString:@"success"]){
             BOOL result = YES;
             returnResult(result);
+        }
+        else{
+            BOOL result2 = NO;
+            returnResult(result2);
         }
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -122,14 +165,5 @@
     }];
 
 }
-
-
-
-
-
-
-
-
-
 
 @end

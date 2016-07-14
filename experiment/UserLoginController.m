@@ -189,6 +189,40 @@
             }
         }
     }
+    
+    
+    //server end verification
+    userInfo *newUser = [[userInfo alloc]init];
+    //note there is no userID at this step
+    newUser.user_name = nameField.text;
+    newUser.user_password = passwordField.text;
+    newUser.autoLogin = autoButton.selected;
+    newUser.rememberUserName = rememberButton.selected;
+    
+    networkRequest *request = [[networkRequest alloc]init];
+    [request checkForDuplicateUserName:newUser CompletionHandler:^(BOOL result) {
+        //here we want the name to be a duplicate
+        if(result == NO){
+            [request processLoginRequestWithParameter:newUser CompletionHandler:^(BOOL result) {
+                if (result == YES){
+                    NSLog(@"login successful");
+                    //change to login view after this
+                }
+                else{
+                    NSLog(@"wrong password");
+                }
+            }];
+        }
+        else{
+            NSLog(@"login fail, check userName/password or your network connection");
+        }
+    }];
+    
+    //clear textField inputs
+    [nameField setText:@""];
+    [passwordField setText:@""];
+    [passwordField2 setText:@""];
+    
 }
 
 -(void)logoutCheck{
@@ -400,7 +434,6 @@
         [autoButton setSelected:YES];
         NSLog(@"auto login mode");
     }
-    
     else{
         [autoButton setSelected:NO];
     }
@@ -412,7 +445,6 @@
         [rememberButton setSelected:YES];
         NSLog(@"remembering user name");
     }
-    
     else{
         [rememberButton setSelected:NO];
     }

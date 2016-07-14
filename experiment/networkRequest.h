@@ -30,7 +30,7 @@ typedef void (^completionBlock)(BOOL result);
 
 -(void)processRegisterRequestWithParameter: (userInfo*)user CompletionHandler:(completionBlock)returnResult;
 
--(void)processLoginRequestWithParameter:(userInfo *)user;
+-(void)processLoginRequestWithParameter:(userInfo *)user CompletionHandler:(completionBlock)returnResult;
 
 -(void)checkForDuplicateUserName:(userInfo*) user CompletionHandler: (completionBlock)returnResult;
 
