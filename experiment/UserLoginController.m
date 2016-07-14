@@ -231,18 +231,18 @@
         return;
     }
     
-    if(![[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
-        NSLog(@"data file missing, chech startUpViewController");
-    }
-    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
-    NSMutableDictionary *dict = array[2];
-    
-    if ([dict objectForKey:userName]){
-        NSLog(@"user name already exists");
-        return;
-    }
+//    if(![[NSFileManager defaultManager]fileExistsAtPath:UserData_filePath]){
+//        NSLog(@"data file missing, chech startUpViewController");
+//    }
+//    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:UserData_filePath];
+//    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+//    NSMutableArray *array = [unarchiver decodeObjectForKey:@"user_information"];
+//    NSMutableDictionary *dict = array[2];
+//    
+//    if ([dict objectForKey:userName]){
+//        NSLog(@"user name already exists");
+//        return;
+//    }
     
     NSString *pass1 = passwordField.text;
     NSString *pass2 = passwordField2.text;
@@ -266,30 +266,44 @@
     newUser.autoLogin = YES;
     newUser.rememberUserName = YES;
     
-    [dict setObject:newUser forKey:userName];
-    
-    NSMutableData *newData = [[NSMutableData alloc]init];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
-    [archiver encodeObject:array forKey:@"user_information"];
-    [archiver finishEncoding];
-    if ([newData writeToFile:UserData_filePath atomically:YES]){
-        NSLog(@"write back after registering new user successful");
-        [nameField setText:@""];
-        [passwordField setText:@""];
-        [passwordField2 setText:@""];
-    }
+//    [dict setObject:newUser forKey:userName];
+//    
+//    NSMutableData *newData = [[NSMutableData alloc]init];
+//    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:newData];
+//    [archiver encodeObject:array forKey:@"user_information"];
+//    [archiver finishEncoding];
+//    if ([newData writeToFile:UserData_filePath atomically:YES]){
+//        NSLog(@"write back after registering new user successful");
+//        [nameField setText:@""];
+//        [passwordField setText:@""];
+//        [passwordField2 setText:@""];
+//    }
     
     //connect with server to include this user info
     networkRequest *request = [[networkRequest alloc]init];
-    [request processRegisterRequestWithParameter:newUser CompletionHandler:^(BOOL result) {
+    //first check to duplicating names
+    [request checkForDuplicateUserName:newUser CompletionHandler:^(BOOL result) {
         if (result == YES){
-            NSLog(@"write to server successfully completed");
+            NSLog(@"this name has not been used");
+            //then write the userInfo into the server
+            [request processRegisterRequestWithParameter:newUser CompletionHandler:^(BOOL result) {
+                if (result == YES){
+                    NSLog(@"write to server successfully completed");
+                }
+                else{
+                    NSLog(@"write to server failed");
+                }
+            }];
         }
         else{
-            NSLog(@"write to server failed");
+            NSLog(@"choose another name/ or the there could be connection failure");
         }
     }];
-
+    
+    //clear textField inputs
+    [nameField setText:@""];
+    [passwordField setText:@""];
+    [passwordField2 setText:@""];
 }
 
 -(void)closeKeyboard: (UITapGestureRecognizer*)tap{
