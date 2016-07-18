@@ -154,12 +154,12 @@
                   moduleName = "experiment"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/sina/Desktop/my_Program/Phoice/experiment/UserLoginController.m"
-                  timestampString = "490159316.913793"
+                  timestampString = "490505827.808865"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "203"
                   endingLineNumber = "203"
-                  offsetFromSymbolStart = "2444">
+                  offsetFromSymbolStart = "2302">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -169,7 +169,7 @@
                   moduleName = "experiment"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/sina/Desktop/my_Program/Phoice/experiment/UserLoginController.m"
-                  timestampString = "490159316.913899"
+                  timestampString = "490505827.808994"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "205"

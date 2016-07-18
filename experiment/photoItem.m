@@ -27,15 +27,17 @@
 -(void) initializeRecorder{
     NSMutableDictionary *_dict = [NSMutableDictionary dictionary];
     
-    [_dict setObject:@(kAudioFormatLinearPCM) forKey:AVFormatIDKey];
+    [_dict setObject:@(kAudioFormatMPEG4AAC) forKey:AVFormatIDKey];
     
     [_dict setObject:@(8000) forKey:AVSampleRateKey];
     
     [_dict setObject:@(1) forKey:AVNumberOfChannelsKey];
     
-    [_dict setObject:@(8) forKey:AVLinearPCMBitDepthKey];
+    [_dict setObject:@(16) forKey:AVLinearPCMBitDepthKey];
     
     [_dict setObject:@(YES) forKey:AVLinearPCMIsFloatKey];
+    
+    [_dict setObject:[NSNumber numberWithInt:AVAudioQualityMax] forKey:AVEncoderAudioQualityKey];
     
     NSError *error;
     _audioRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPath:self.audioAddress] settings:_dict error:&error];
