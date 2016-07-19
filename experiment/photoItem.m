@@ -27,11 +27,11 @@
 -(void) initializeRecorder{
     NSMutableDictionary *_dict = [NSMutableDictionary dictionary];
     
-    [_dict setObject:@(kAudioFormatMPEG4AAC) forKey:AVFormatIDKey];
+    [_dict setObject:@(kAudioFormatLinearPCM) forKey:AVFormatIDKey];
     
-    [_dict setObject:@(8000) forKey:AVSampleRateKey];
+    [_dict setObject:@(44100) forKey:AVSampleRateKey];
     
-    [_dict setObject:@(1) forKey:AVNumberOfChannelsKey];
+    [_dict setObject:@(2) forKey:AVNumberOfChannelsKey];
     
     [_dict setObject:@(16) forKey:AVLinearPCMBitDepthKey];
     

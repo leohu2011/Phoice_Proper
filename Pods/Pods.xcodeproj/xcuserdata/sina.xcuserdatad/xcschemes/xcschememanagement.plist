@@ -39,11 +39,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>FDWaveformView-FDWaveformView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>FDWaveformView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -79,6 +74,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PureLayout.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SCSiriWaveformView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -107,37 +107,27 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>03A7A5CD5B996B207F87A2EB9091C6DC</key>
+		<key>12B1A580E2957BC8AC4815A098AE46B0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>06A6DF17139A3922DD71109D59262F44</key>
+		<key>217C513C087CFC2C52F8DF0ECC59173F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>0DC265EDF108F53417A669933EE82946</key>
+		<key>2D9BF97CCAB8403D3298E64423E7C7D7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>2602F3D0DAC534568B6AD7EEA0DD1959</key>
+		<key>4661A2A9567AA68129B496B9F4B61FF1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>31412D84D296ED5BC40F4E1BD07DC56D</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>344C810697DE65D7D60A57F8E7E105D2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>4938D25D702A60D5B83CA4CDD035A9CF</key>
+		<key>51C74967192D212D112657F856A08EC5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -147,12 +137,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>52E8520EEB3CD4AEB0283BD08ECB551A</key>
+		<key>5813251FEA21E4AEE97385709F1912DE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5813251FEA21E4AEE97385709F1912DE</key>
+		<key>63A76DE1B86C030E1698C0CBF44638B0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>733481229447FADD268A19538E6355EC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -162,7 +157,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>925DAA96E8FD727F0CB567BFCC737C3D</key>
+		<key>8CA69378F60A83BDE57D053E45D6E7DB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>928353533005A4198EBDA5B700D37B64</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -187,17 +187,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A9DD0511E7BEB30672D6697BC3398ABB</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>B180241C64C8328694E67BDDD9D432E2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>E2FE87384A67337831E53490EEA8BF11</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F31A43B8D10DFDC32B9192402B522F9D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

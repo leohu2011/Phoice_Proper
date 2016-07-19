@@ -15,6 +15,8 @@
 #import "photoItem.h"
 #import "FolderArray.h"
 #import "AVUnit.h"
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
 
 
 @interface detailViewController()<UIScrollViewDelegate,AVAudioRecorderDelegate, AVAudioPlayerDelegate>
@@ -56,6 +58,11 @@
     UIButton *pauseP;
     UIButton *resumeP;
     UIButton *stopP;
+    
+    UIBarButtonItem *flexItem;
+    UIBarButtonItem *sendVoiceItem;
+    UIBarButtonItem *sendPhotoItem;
+    
 }
 
 -(instancetype) initWithIndex:(NSIndexPath*)indexpath andAddress: (NSString*) address{
@@ -291,7 +298,130 @@
     [stopP addGestureRecognizer:Stop];
     stopP.userInteractionEnabled = YES;
     [self.view addSubview:stopP];
+    
+    
+    flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    sendVoiceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(sendFile)];
+    sendPhotoItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(sendPhoto)];
+    [self setToolbarItems:@[flexItem,sendVoiceItem, flexItem, sendPhotoItem, flexItem]];
+    [self.navigationController setToolbarHidden:NO];
+    
 }
+
+-(void)sendPhoto{
+    NSLog(@"starting uploadiong photo procedures");
+    
+    // 启动系统风火轮
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
+    //服务器给的域名
+    NSString *domainStr = @"http://10.209.68.42/insert.php";
+    
+    //假如需要提交给服务器的参数是key＝1,class_id=100
+    //创建一个可变字典
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    //往字典里面添加需要提交的参数
+    
+    NSString *name = @"destop";
+    NSNumber *ID = [NSNumber numberWithInteger:12345];
+    NSString *description = @"testing photo upload function";
+    
+    [parametersDict setObject:name forKey:@"name"];
+    [parametersDict setObject:ID forKey:@"ID"];
+    [parametersDict setObject:description forKey:@"description"];
+    
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    //these serializers have both the normal type and the json type. determine which one to use
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    //do not user the requestSerializer here for the intended string is not a json string. user this if we are sending over an nsdata->json string
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
+    
+    
+    [manager POST:domainStr parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        UIImage *img = [UIImage imageNamed:@"wu"];
+        NSData *data = UIImagePNGRepresentation(img);
+        [formData appendPartWithFileData:data name:@"testingPhoto" fileName:@"wu.png" mimeType:@"image/png"];
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        NSLog(@"%lf",1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        //json解析
+        NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+        
+        NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+        
+        NSLog(@"---获取到的json格式的字典--%@",resultDict);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSLog(@"failure due to: %@", error.userInfo);
+        
+    }];
+}
+
+-(void)sendFile{
+    NSLog(@"sending over voice file");
+    
+    // 启动系统风火轮
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
+    //服务器给的域名
+    NSString *domainStr = @"http://10.209.68.42/insert2.php";
+    
+    //假如需要提交给服务器的参数是key＝1,class_id=100
+    //创建一个可变字典
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    //往字典里面添加需要提交的参数
+    
+    NSString *name = @"destop";
+    NSNumber *ID = [NSNumber numberWithInteger:12345];
+    NSString *description = @"testing photo upload function";
+    
+    [parametersDict setObject:name forKey:@"name"];
+    [parametersDict setObject:ID forKey:@"ID"];
+    [parametersDict setObject:description forKey:@"description"];
+    
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    //these serializers have both the normal type and the json type. determine which one to use
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    //do not user the requestSerializer here for the intended string is not a json string. user this if we are sending over an nsdata->json string
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithArray:@[@"text/html", @"text/plain", @"text/json", @"application/json"]];
+    
+    [manager POST:domainStr parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        
+        NSString *path = self.audioLocation;
+        NSData *data = [[NSData alloc]initWithContentsOfFile:path];
+        [formData appendPartWithFileData:data name:@"testingVoice" fileName:@"sample.wav" mimeType:@"audio/wav"];
+        
+//        NSURL *url = [NSURL URLWithString: self.audioLocation];
+//        NSURL *url = [NSURL URLWithString:[self.audioLocation stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+//        [formData appendPartWithFileURL:url name:@"testingVoice" fileName:@"sample.wav" mimeType:@"audio/wav" error:nil];
+//        [formData appendPartWithFileURL:url name:@"testingVoice" error:nil];
+
+    } success:^(NSURLSessionDataTask *task, id responseObject) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        //json解析
+        NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+        
+        NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+        
+        NSLog(@"---获取到的json格式的字典--%@",resultDict);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSLog(@"failure due to: %@", error.userInfo);
+
+    }];
+
+    
+}
+
 
 //recorder
 - (void)recordClick:(UIButton *)sender{

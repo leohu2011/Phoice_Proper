@@ -899,7 +899,7 @@
     NSString *myDirectory = [documentDirectory stringByAppendingPathComponent:@"recording addresses"];
     [fileManage createDirectoryAtPath:myDirectory withIntermediateDirectories:NO attributes:nil error:nil];
     NSString* filePath= [myDirectory stringByAppendingPathComponent:unique_ID];
-    NSString *result = [filePath stringByAppendingString:@".aac"];
+    NSString *result = [filePath stringByAppendingString:@".wav"];
     
     return result;
 }
