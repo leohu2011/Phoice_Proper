@@ -308,6 +308,55 @@
     
 }
 
+//-(void)sendPhoto{
+//    NSLog(@"starting uploadiong photo procedures");
+//    
+//    // 启动系统风火轮
+//    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+//    
+//    //服务器给的域名
+//    NSString *domainStr = @"http://10.236.52.85/test_2.php";
+//    
+//    //假如需要提交给服务器的参数是key＝1,class_id=100
+//    //创建一个可变字典
+//    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+//    //往字典里面添加需要提交的参数
+//    
+//    NSString *name = @"destop";
+//    NSNumber *ID = [NSNumber numberWithInteger:12345];
+//    NSString *description = @"fake password";
+//    
+//    [parametersDict setObject:name forKey:@"name"];
+//    [parametersDict setObject:ID forKey:@"ID"];
+//    [parametersDict setObject:description forKey:@"password"];
+//    
+//    
+//    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+//    
+//    //these serializers have both the normal type and the json type. determine which one to use
+//    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    //do not user the requestSerializer here for the intended string is not a json string. user this if we are sending over an nsdata->json string
+//        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+////    [manager.requestSerializer setValue:@"text/html; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+//    
+//    [manager POST:domainStr parameters:parametersDict progress:^(NSProgress * _Nonnull uploadProgress) {
+//        NSLog(@"%lf",1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//        
+//        //json解析
+//        NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+//        
+//        NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+//        
+//        NSLog(@"---获取到的json格式的字典--%@",resultDict);
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//        NSLog(@"failure due to: %@", error.userInfo);
+//    }];
+//}
+
+
 -(void)sendPhoto{
     NSLog(@"starting uploadiong photo procedures");
     
@@ -315,7 +364,7 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     //服务器给的域名
-    NSString *domainStr = @"http://10.209.68.42/insert.php";
+    NSString *domainStr = @"http://10.236.52.85/test_3.php";
     
     //假如需要提交给服务器的参数是key＝1,class_id=100
     //创建一个可变字典
@@ -333,17 +382,22 @@
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     
-    //these serializers have both the normal type and the json type. determine which one to use
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    //do not user the requestSerializer here for the intended string is not a json string. user this if we are sending over an nsdata->json string
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        
+    [manager.requestSerializer setValue:@"text/json" forHTTPHeaderField:@"Content_type"];
+    [manager.requestSerializer setValue:@"UTF-8" forHTTPHeaderField:@"charset"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"multipart/form-data", @"application/json", @"text/html", @"text/json", @"image/png", @"image/jpeg", nil];
     
-    
+//    [manager.requestSerializer setValue:@"application/json; text/html" forHTTPHeaderField:@"Content-Type"];
     
     [manager POST:domainStr parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        
         UIImage *img = [UIImage imageNamed:@"wu"];
         NSData *data = UIImagePNGRepresentation(img);
+        
         [formData appendPartWithFileData:data name:@"testingPhoto" fileName:@"wu.png" mimeType:@"image/png"];
+        
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         NSLog(@"%lf",1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -358,9 +412,32 @@
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         NSLog(@"failure due to: %@", error.userInfo);
-        
     }];
+    
+//    [manager POST:domainStr parameters:parametersDict constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+//        UIImage *img = [UIImage imageNamed:@"wu"];
+//        NSData *data = UIImagePNGRepresentation(img);
+//        
+////        [formData appendPartWithFileData:data name:@"testingPhoto" fileName:@"wu.png" mimeType:@"image/png"];
+//        
+//    } progress:^(NSProgress * _Nonnull uploadProgress) {
+//        NSLog(@"%lf",1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//        
+//        //json解析
+//        NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+//        
+//        NSString *resultString = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+//        
+//        NSLog(@"---获取到的json格式的字典--%@",resultDict);
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//        NSLog(@"failure due to: %@", error.userInfo);
+//        
+//    }];
 }
+
 
 -(void)sendFile{
     NSLog(@"sending over voice file");
@@ -369,7 +446,8 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     //服务器给的域名
-    NSString *domainStr = @"http://10.209.68.42/insert2.php";
+    NSString *domainStr = @"http://10.236.53.63/insert2.php";
+    domainStr = [domainStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     //假如需要提交给服务器的参数是key＝1,class_id=100
     //创建一个可变字典
