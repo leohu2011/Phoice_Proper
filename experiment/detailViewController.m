@@ -364,7 +364,7 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     //服务器给的域名
-    NSString *domainStr = @"http://10.236.52.85/test_3.php";
+    NSString *domainStr = @"http://10.236.56.75/test_3.php";
     
     //假如需要提交给服务器的参数是key＝1,class_id=100
     //创建一个可变字典
@@ -446,7 +446,7 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     //服务器给的域名
-    NSString *domainStr = @"http://10.236.53.63/insert2.php";
+    NSString *domainStr = @"http://10.236.56.75/test_4.php";
     domainStr = [domainStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     
@@ -481,11 +481,10 @@
     
     
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:@"text/html" forHTTPHeaderField:@"Content-Type"];
+//    [manager.requestSerializer setValue:@"text/html" forHTTPHeaderField:@"Content-Type"];
     
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithArray:@[@"text/html", @"text/plain", @"text/json", @"application/json"]];
-//    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithArray:@[@"text/html", @"text/plain", @"text/json", @"application/json"]];
     
     [manager POST:domainStr parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSString *path = self.audioLocation;
