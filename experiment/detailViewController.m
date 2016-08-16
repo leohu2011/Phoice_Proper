@@ -391,7 +391,7 @@
     
 //    [manager.requestSerializer setValue:@"application/json; text/html" forHTTPHeaderField:@"Content-Type"];
     
-    [manager POST:domainStr parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    [manager POST:domainStr parameters:parametersDict constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         
         UIImage *img = [UIImage imageNamed:@"wu"];
         NSData *data = UIImagePNGRepresentation(img);

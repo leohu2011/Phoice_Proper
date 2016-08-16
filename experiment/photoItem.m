@@ -164,7 +164,6 @@
 
 - (void)recordClick:(UIButton *)sender {
     
-    
     if (!_audioRecorder){
         [self initializeRecorder];
     }
@@ -176,10 +175,15 @@
     NSString *myDirectory = [documentDirectory stringByAppendingPathComponent:@"recording addresses"];
     [fileManage createDirectoryAtPath:myDirectory withIntermediateDirectories:NO attributes:nil error:nil];
     NSString* filePath= [myDirectory stringByAppendingPathComponent:self.audio_unique_ID];
+    NSString *filepath = [filePath stringByAppendingString:@".wav"];
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
-        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-        NSLog(@"previous recording removed");
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filepath]){
+        [_audioRecorder stop];
+        bool success = [_audioRecorder deleteRecording];
+        //        [[NSFileManager defaultManager] removeItemAtPath:filepath error:nil];
+        if (success) {
+            NSLog(@"previous recording removed");
+        }
     }
     
 //    if ([[NSFileManager defaultManager] fileExistsAtPath:self.audioAddress]){
@@ -220,7 +224,7 @@
 }
 
 
--(void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag{
+-(void)audioAddress:(AVAudioRecorder *)recorder successfully:(BOOL)flag{
     
     if (flag){
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.audioAddress]){
