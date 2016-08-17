@@ -54,6 +54,8 @@
     NSError *error;
     [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
+    
     
     if (_audioPlayer == nil){
         _audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.audioAddress] error:nil];
@@ -223,6 +225,22 @@
     
 }
 
+-(void) audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag{
+    if (flag) {
+        if (_audioRecorder){
+            _audioRecorder.delegate = nil;
+            _audioRecorder = nil;
+            [[AVAudioSession sharedInstance] setActive:NO error:nil];
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+            NSLog(@"audioRecorder deleted");
+        }
+        NSLog(@"recording successfully finished");
+    }
+    else{
+        NSLog(@"audio recorder end with failure");
+    }
+}
+
 
 -(void)audioAddress:(AVAudioRecorder *)recorder successfully:(BOOL)flag{
     
@@ -284,6 +302,7 @@
             _audioPlayer = nil;
             
 //            [[AVAudioSession sharedInstance] setCategory:previousMode error:nil];
+            [[AVAudioSession sharedInstance] setActive:NO error:nil];
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             NSLog(@"audioPlayer deleted");
         }
