@@ -21,6 +21,8 @@
 
 @property (nonatomic, copy) NSString *recordingAdress;
 
+@property (nonatomic, copy) UIButton *hasRecording;
+
 
 @end
 

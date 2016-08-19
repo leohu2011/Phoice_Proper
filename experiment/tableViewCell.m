@@ -22,6 +22,7 @@
 
 -(instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]){
+        
 //        int index = arc4random_uniform((int)self.photoArray.count);
 //        NSString *str = self.photoArray[index];
 //        NSURL *url = [NSURL URLWithString:str];
@@ -36,6 +37,7 @@
         
         
         //[self.contentView addSubview: imageShown];
+
     }
     
     return self;

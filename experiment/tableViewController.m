@@ -266,6 +266,20 @@
         cell.photoAddress = unit.big_address;
         cell.tag = (int)position;
         
+        //add the hasRecording button onto the tableViewCell
+        BOOL containRecording = [self containRecordingInCell:unit];
+        CGRect rect = cell.frame;
+        UILabel *lbl = [[UILabel alloc]init];
+        lbl.frame = CGRectMake(rect.size.width - 10, rect.origin.y + 10, 20, rect.size.height-10);
+        lbl.text = @"R";
+        if(containRecording){
+            lbl.textColor = [UIColor greenColor];
+        }
+        else{
+            lbl.textColor = [UIColor grayColor];
+        }
+        [cell addSubview:lbl];
+        
         return cell;
         
     }
@@ -909,6 +923,13 @@
     
     cell.textLabel.text = string;
     cell.detailTextLabel.text = detail;
+}
+
+-(BOOL)containRecordingInCell: (AVUnit*)unit{
+    NSString *recording_address = unit.recording_address;
+    BOOL hasRecording = [[NSFileManager defaultManager]fileExistsAtPath:recording_address];
+    
+    return hasRecording;
 }
 
 @end
