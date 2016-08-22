@@ -18,10 +18,14 @@
 
 @end
 
-@implementation tableViewCell
+@implementation tableViewCell{
+    UILabel *hasRecording;
+}
 
 -(instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
-    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]){
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    
+    if (self){
         
 //        int index = arc4random_uniform((int)self.photoArray.count);
 //        NSString *str = self.photoArray[index];
@@ -37,11 +41,27 @@
         
         
         //[self.contentView addSubview: imageShown];
-
+        
+        //add the hasRecording button onto the tableViewCell
+        CGRect rect = self.frame;
+        hasRecording = [[UILabel alloc]init];
+        hasRecording.frame = CGRectMake(rect.size.width - 30, rect.origin.y + 10, 20, rect.size.height-10);
+        hasRecording.text = @"R";
+        hasRecording.textColor = [UIColor grayColor];
+        [self.contentView addSubview:hasRecording];
+        
     }
     
     return self;
 }
+
+-(void)containRecordingInCell:(BOOL)contain {
+    if (contain){
+        hasRecording.textColor = [UIColor greenColor];
+    }
+}
+
+
 
 -(void)layoutSubviews{
     

@@ -13,6 +13,8 @@
 
 @interface tableViewCell : UITableViewCell
 
+//typedef void (^updateBlock)(BOOL contain);
+
 //@property (nonatomic, strong) NSArray *photoArray;
 
 //@property (nonatomic, strong) UIImageView *imgView;
@@ -21,8 +23,8 @@
 
 @property (nonatomic, copy) NSString *recordingAdress;
 
-@property (nonatomic, copy) UIButton *hasRecording;
 
+-(void)containRecordingInCell:(BOOL)contain;
 
 @end
 

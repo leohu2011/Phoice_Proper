@@ -49,6 +49,8 @@
     UIVisualEffectView *blurView;
 }
 
+#pragma mark - UIView Life Cycyle
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
@@ -67,16 +69,21 @@
     
     [self initializeTableView];
     
+    [self updateCurrentListInfo];
 }
+
+
 
 #pragma mark - UITableView methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
-    folderArray *rootArray = [dict objectForKey:self.uniqueID];
-    self.tv_array = rootArray;
-    NSInteger count = rootArray.content_array.count;
+//    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+//    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+//    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+//    folderArray *rootArray = [dict objectForKey:self.uniqueID];
+//    self.tv_array = rootArray;
+//    NSInteger count = rootArray.content_array.count;
+    NSInteger count = self.tv_array.content_array.count;
+    
     return count;
 }
 
@@ -167,6 +174,9 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+//    //update information
+//    [self updateCurrentListInfo];
     NSInteger position = indexPath.row;
     
     //item is a folder
@@ -268,17 +278,7 @@
         
         //add the hasRecording button onto the tableViewCell
         BOOL containRecording = [self containRecordingInCell:unit];
-        CGRect rect = cell.frame;
-        UILabel *lbl = [[UILabel alloc]init];
-        lbl.frame = CGRectMake(rect.size.width - 10, rect.origin.y + 10, 20, rect.size.height-10);
-        lbl.text = @"R";
-        if(containRecording){
-            lbl.textColor = [UIColor greenColor];
-        }
-        else{
-            lbl.textColor = [UIColor grayColor];
-        }
-        [cell addSubview:lbl];
+        [cell containRecordingInCell:containRecording];
         
         return cell;
         
@@ -931,5 +931,19 @@
     
     return hasRecording;
 }
+
+-(void)updateCurrentListInfo{
+    NSMutableData *data = [[NSMutableData alloc]initWithContentsOfFile:Plist_filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+    NSMutableDictionary *dict = [unarchiver decodeObjectForKey:@"mainDict"];
+    folderArray *rootArray = [dict objectForKey:self.uniqueID];
+    self.tv_array = rootArray;
+    
+    [self.tableView reloadData];
+}
+
+
+
+
 
 @end
