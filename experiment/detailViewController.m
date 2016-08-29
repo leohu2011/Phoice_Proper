@@ -301,7 +301,7 @@
     
     
     flexItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    sendVoiceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(sendFile)];
+    sendVoiceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(receiveImage)];
     sendPhotoItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(sendPhoto)];
     [self setToolbarItems:@[flexItem,sendVoiceItem, flexItem, sendPhotoItem, flexItem]];
     [self.navigationController setToolbarHidden:NO];
@@ -507,6 +507,36 @@
         NSLog(@"failure due to: %@", error.userInfo);
 
     }];
+}
+
+-(void)receiveImage{
+    NSString *str = @"http://10.236.52.92/download/wu.png";
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:str] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
+    
+    [[AFImageDownloader defaultInstance] downloadImageForURLRequest:request success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull responseObject) {
+        NSLog(@"success");
+        UIImage *image = [[AFImageDownloader defaultInstance].imageCache imageforRequest:request withAdditionalIdentifier:nil];
+        
+        UIImageView *imgView = [[UIImageView alloc]initWithImage:image];
+        imgView.frame = (CGRectMake(0,0, 300,300));
+        imgView.center = CGPointMake(200,500);
+        imgView.userInteractionEnabled = YES;
+        imgView.multipleTouchEnabled = YES;
+        [self.view addSubview: imgView];
+        
+        
+        NSData *data = UIImagePNGRepresentation(image);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentPath = [paths objectAtIndex:0];
+        NSString *filepath = [documentPath stringByAppendingPathComponent:@"wu.png"];
+        if(![data writeToFile:filepath atomically:YES]){
+            NSLog(@"save image to document fails");
+        }
+        
+    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+        NSLog(@"failure");
+    }];
+
 }
 
 

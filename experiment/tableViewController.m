@@ -47,6 +47,7 @@
     UIBarButtonItem *edit_action;
     NSString *folderIcon;
     UIVisualEffectView *blurView;
+    
 }
 
 #pragma mark - UIView Life Cycyle
@@ -519,6 +520,7 @@
     add_Action = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFolder:)];
     
     user_login = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(gotoLogin:)];
+    
     
     [self setToolbarItems:@[edit_action,flexItem, add_Action, flexItem, user_login] animated:NO];
     [self.navigationController setToolbarHidden:NO animated:YES];

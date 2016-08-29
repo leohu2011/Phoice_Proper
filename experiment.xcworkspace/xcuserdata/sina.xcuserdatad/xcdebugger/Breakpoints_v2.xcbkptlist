@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "experiment/tableViewController.m"
-            timestampString = "493543868.623982"
+            filePath = "experiment/detailViewController.m"
+            timestampString = "494151784.796083"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "932"
-            endingLineNumber = "932"
-            landmarkName = "-containRecordingInCell:"
+            startingLineNumber = "514"
+            endingLineNumber = "514"
+            landmarkName = "-receiveImage"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "experiment/tableViewCell.m"
-            timestampString = "493543707.908337"
+            filePath = "experiment/detailViewController.m"
+            timestampString = "494152699.212403"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "-containRecordingInCell:"
+            startingLineNumber = "537"
+            endingLineNumber = "537"
+            landmarkName = "-receiveImage"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "experiment/detailViewController.m"
+            timestampString = "494152137.892651"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "520"
+            endingLineNumber = "520"
+            landmarkName = "-receiveImage"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
