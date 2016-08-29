@@ -510,32 +510,56 @@
 }
 
 -(void)receiveImage{
-    NSString *str = @"http://10.236.52.92/download/wu.png";
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:str] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
+//    NSString *str = @"http://10.236.52.92/download/wu.png";
+//    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:str] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     
-    [[AFImageDownloader defaultInstance] downloadImageForURLRequest:request success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull responseObject) {
-        NSLog(@"success");
-        UIImage *image = [[AFImageDownloader defaultInstance].imageCache imageforRequest:request withAdditionalIdentifier:nil];
+//    [[AFImageDownloader defaultInstance] downloadImageForURLRequest:request success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull responseObject) {
+//        NSLog(@"success");
+//        UIImage *image = [[AFImageDownloader defaultInstance].imageCache imageforRequest:request withAdditionalIdentifier:nil];
+//        
+//        UIImageView *imgView = [[UIImageView alloc]initWithImage:image];
+//        imgView.frame = (CGRectMake(0,0, 300,300));
+//        imgView.center = CGPointMake(200,500);
+//        imgView.userInteractionEnabled = YES;
+//        imgView.multipleTouchEnabled = YES;
+//        [self.view addSubview: imgView];
+//        
+//        
+//        NSData *data = UIImagePNGRepresentation(image);
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString *documentPath = [paths objectAtIndex:0];
+//        NSString *filepath = [documentPath stringByAppendingPathComponent:@"wu.png"];
+//        if(![data writeToFile:filepath atomically:YES]){
+//            NSLog(@"save image to document fails");
+//        }
+//        
+//    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+//        NSLog(@"failure");
+//    }];
+    
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc]initWithSessionConfiguration:config];
+    
+    NSString *str = @"http://10.236.52.92/download/sample.wav";
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:str]];
+    
+    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        NSLog(@"%lf",1.0 *downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        NSURL *documentDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+        return [documentDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        NSLog(@"File downloaded to destination: %@", filePath);
         
-        UIImageView *imgView = [[UIImageView alloc]initWithImage:image];
-        imgView.frame = (CGRectMake(0,0, 300,300));
-        imgView.center = CGPointMake(200,500);
-        imgView.userInteractionEnabled = YES;
-        imgView.multipleTouchEnabled = YES;
-        [self.view addSubview: imgView];
-        
-        
-        NSData *data = UIImagePNGRepresentation(image);
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentPath = [paths objectAtIndex:0];
-        NSString *filepath = [documentPath stringByAppendingPathComponent:@"wu.png"];
-        if(![data writeToFile:filepath atomically:YES]){
-            NSLog(@"save image to document fails");
+        NSString *stringPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0]stringByAppendingPathComponent:@"sample.wav"];
+        NSData *data = [NSData dataWithContentsOfURL:filePath];
+        if(data){
+            [data writeToFile:stringPath atomically:YES];
         }
-        
-    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
-        NSLog(@"failure");
     }];
+    
+    [downloadTask resume];
 
 }
 
