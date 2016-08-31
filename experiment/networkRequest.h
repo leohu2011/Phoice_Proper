@@ -28,12 +28,22 @@ typedef void (^completionBlock)(BOOL result);
 //@property (nonatomic, assign) networkRequestType *type;
 
 
+//user login module
 -(void)processRegisterRequestWithParameter: (userInfo*)user CompletionHandler:(completionBlock)returnResult;
 
 -(void)processLoginRequestWithParameter:(userInfo *)user CompletionHandler:(completionBlock)returnResult;
 
 -(void)checkForDuplicateUserName:(userInfo*) user CompletionHandler: (completionBlock)returnResult;
 
+
+//user share/retrive info module
+-(void)sendOverImage: (UIImage*) img CompletionHandler: (completionBlock)returnResult;
+
+-(void)sendOverAudioDataWithAddress: (NSString*)address CompletionHandler: (completionBlock)returnResult;
+
+-(UIImage*)retriveImageWithName: (NSString*)name CompletionHandler: (completionBlock)returnResult;
+
+-(void) retriveVoiceDataWithName: (NSString*)name ToLocalDestination: (NSString*) destination CompletionHandler: ( completionBlock) returnResult;
 
 
 
