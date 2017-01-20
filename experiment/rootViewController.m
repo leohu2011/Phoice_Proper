@@ -135,6 +135,7 @@
     }
     
     [db close];
+    //something
 }
 
 -(void)obtainDataFromDB{
